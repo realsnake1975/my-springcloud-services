@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+<!--    &lt;!&ndash;<appender name="FILE-LOGGER" class="ch.qos.logback.core.rolling.RollingFileAppender">&ndash;&gt;-->
+<!--    <appender name="FILE-LOGGER" class="com.lguplus.homeshoppingmoa.config.logging.CustomRollingFileAppender">-->
+<!--        <encoder>-->
+<!--            <Pattern>%msg %n</Pattern>-->
+<!--        </encoder>-->
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+<!--            <fileNamePattern>${LOG_PATH}/tlo/%d{yyyyMMdd, aux}/${LOG_FILE}.%d{yyyyMMddHHmm}.log</fileNamePattern>-->
+<!--            <maxHistory>22040</maxHistory>-->
+<!--        </rollingPolicy>-->
+<!--    </appender>-->
+
+<!--    &lt;!&ndash; AsyncAppender &ndash;&gt;-->
+<!--    <appender name="FILE-ASYNC-LOGGER" class="ch.qos.logback.classic.AsyncAppender">-->
+<!--        <appender-ref ref="FILE-LOGGER" />-->
+<!--        <queueSize>1024</queueSize> &lt;!&ndash; default 256 &ndash;&gt;-->
+<!--        <discardingThreshold>10</discardingThreshold> &lt;!&ndash; default 20 &ndash;&gt;-->
+<!--        <includeCallerData>false</includeCallerData>-->
+<!--        <neverBlock>true</neverBlock>-->
+<!--        &lt;!&ndash;<maxFlushTime>1000</maxFlushTime>&ndash;&gt;-->
+<!--    </appender>-->
+
+    <appender name="FILE-ROOT-LOGGER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <Pattern>${FILE_LOG_PATTERN}</Pattern>
+        </encoder>
+        <!--${LOG_PATH}/${LOG_FILE}.log</file>-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/app/${LOG_FILE}/${LOG_FILE}.%d{yyyyMMdd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <springProfile name="local">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+
+    <springProfile name="!local">
+<!--        <logger name="UPLUS-LOGGER" level="INFO" additivity="false">-->
+<!--            <appender-ref ref="CONSOLE" />-->
+<!--            <appender-ref ref="FILE-ASYNC-LOGGER" />-->
+<!--        </logger>-->
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+            <appender-ref ref="FILE-ROOT-LOGGER" />
+        </root>
+    </springProfile>
+
+</configuration>

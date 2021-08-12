@@ -1,0 +1,42 @@
+# 그레들 빌드
+FROM adoptopenjdk/openjdk11:latest as build
+
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle .
+COPY settings.gradle .
+COPY gradle.properties .
+
+# 서비스
+COPY common common
+COPY account-service account-service
+
+RUN chmod +x ./gradlew
+RUN ./gradlew -x test :account-service:build || return 0
+RUN ./gradlew -x test :account-service:bootJar
+
+# 도커라이징
+FROM adoptopenjdk/openjdk11:latest
+LABEL maintainer="admin"
+VOLUME /tmp
+
+ARG SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-local}
+ENV SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-local}
+RUN echo ${SPRING_PROFILES_ACTIVE}
+
+COPY --from=build /account-service/build/libs/*.jar app.jar
+
+# timezone 변경
+ENV TZ=Asia/Seoul
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+# 보안검수 조치
+RUN rm /usr/bin/curl
+RUN mkdir /.log
+RUN groupadd -r springboot && useradd -r -g springboot springboot
+RUN chown -R springboot:springboot /.log
+RUN chown springboot:springboot app.jar
+RUN usermod --shell /sbin/nologin springboot
+USER springboot
+EXPOSE 9010
+
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app.jar"]
