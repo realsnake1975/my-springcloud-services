@@ -1,7 +1,6 @@
 package my.springcloud.common.wrapper;
 
 import my.springcloud.common.utils.TextUtils;
-import static my.springcloud.common.utils.TextUtils.hasText;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.URLCodec;
@@ -108,7 +107,7 @@ public class CustomHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public Enumeration<String> getParameterNames() {
-        return new Enumeration<String>() {
+        return new Enumeration<>() {
             private final String[] arr = getParameterMap().keySet().toArray(new String[0]);
             private int index = 0;
 

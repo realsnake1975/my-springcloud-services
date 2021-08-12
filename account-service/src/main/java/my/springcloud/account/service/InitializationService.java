@@ -1,14 +1,14 @@
 package my.springcloud.account.service;
 
-import my.springcloud.account.model.aggregate.Account;
-import my.springcloud.account.model.aggregate.Authority;
-import my.springcloud.account.model.entity.Menu;
-import my.springcloud.account.model.entity.MenuAuthority;
-import my.springcloud.account.repository.AccountRepository;
-import my.springcloud.account.repository.MenuRepository;
+import my.springcloud.account.domain.aggregate.Account;
+import my.springcloud.account.domain.aggregate.Authority;
+import my.springcloud.account.domain.entity.Menu;
+import my.springcloud.account.domain.entity.MenuAuthority;
+import my.springcloud.account.domain.repository.AccountRepository;
+import my.springcloud.account.domain.repository.MenuRepository;
 import my.springcloud.common.constants.AccountStatusType;
 import my.springcloud.common.constants.RoleType;
-import my.springcloud.account.repository.AuthorityRepository;
+import my.springcloud.account.domain.repository.AuthorityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -23,8 +23,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
+@Service
 public class InitializationService implements CommandLineRunner {
 
     private final MenuRepository menuRepository;
@@ -42,25 +42,23 @@ public class InitializationService implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        List<Menu> menus = this.saveInitMenu();
-        Authority saAuth = this.saveInitAuthorities(menus);
-        this.saveInitAdminAccount(saAuth);
+        List<Menu> menus = this.saveOrGetMenus();
+        Authority saAuth = this.saveOrGetAuthorities(menus);
+        this.saveAdminAccountIfEmpty(saAuth);
     }
 
     @Transactional
-    public List<Menu> saveInitMenu() {
+    public List<Menu> saveOrGetMenus() {
         List<Menu> menus = this.menuRepository.findAll();
         if (menus.isEmpty()) {
-            menus.addAll(this.saveInitProductMgt());
-            menus.addAll(this.saveInitServiceMgt());
-            menus.addAll(this.saveInitOperationMgt());
+            menus.addAll(this.saveDefaultMenu());
         }
 
         return menus;
     }
 
     @Transactional
-    public Authority saveInitAuthorities(List<Menu> menus) {
+    public Authority saveOrGetAuthorities(List<Menu> menus) {
         Optional<Authority> maybeSuperadmin = this.authorityRepository.findTop1ByAuthorityName(RoleType.SUPERADMIN.getName());
         LocalDateTime now = LocalDateTime.now();
 
@@ -94,7 +92,7 @@ public class InitializationService implements CommandLineRunner {
         }
 
         Optional<Authority> maybeOperator = this.authorityRepository.findTop1ByAuthorityName(RoleType.OPERATOR.getName());
-        if (!maybeOperator.isPresent()) {
+        if (maybeOperator.isEmpty()) {
             Authority operator = new Authority();
             operator.setAuthorityName(RoleType.OPERATOR.getName());
             operator.setDescription("유플러스 사업팀");
@@ -110,7 +108,7 @@ public class InitializationService implements CommandLineRunner {
     }
 
     @Transactional
-    public void saveInitAdminAccount(Authority saAuth) {
+    public void saveAdminAccountIfEmpty(Authority saAuth) {
         List<Account> accounts = this.accountRepository.findAll();
         boolean nonExistsSueradmin = accounts.stream().noneMatch(a -> a.getAuthority().getAuthorityName().equals(RoleType.SUPERADMIN.getName()));
         boolean nonExistsUsernameAdmin = accounts.stream().noneMatch(a -> a.getUsername().equals("admin"));
@@ -120,11 +118,11 @@ public class InitializationService implements CommandLineRunner {
 
             Account adminAccount = new Account();
             adminAccount.setUsername("admin");
-            adminAccount.setPassword(this.passwordEncoder.encode("admin123"));
+            adminAccount.setPassword(this.passwordEncoder.encode("!@#Admin123"));
             adminAccount.setAccountName("관리자");
-            adminAccount.setCompanyName("유플러스");
+            adminAccount.setCompanyName("(주)리얼스네이크");
             adminAccount.setPhoneNumber("00000000000");
-            adminAccount.setEmail("email@uplus.com");
+            adminAccount.setEmail("realsnake1975@gmail.com");
             adminAccount.setStatus(AccountStatusType.APPROVAL.code());
             adminAccount.setRegId(REG_USER_ID);
             adminAccount.setRegDt(now);
@@ -136,79 +134,11 @@ public class InitializationService implements CommandLineRunner {
         }
     }
 
-    private List<Menu> saveInitProductMgt() {
-        Menu menu = new Menu();
-        menu.setDepth(1);
-        menu.setMenuName("상품관리");
-        menu.setSortOrder(1);
-
-        Menu subMenu1 = new Menu();
-        subMenu1.setMenuId(menu.getMenuId());
-        subMenu1.setDepth(2);
-        subMenu1.setMenuName("튜토리얼관리");
-        subMenu1.setMenuUrl("/v1/tutorials");
-        subMenu1.setSortOrder(1);
-
-        Menu subMenu2 = new Menu();
-        subMenu2.setMenuId(menu.getMenuId());
-        subMenu2.setDepth(2);
-        subMenu2.setMenuName("홈쇼핑사관리");
-        subMenu2.setMenuUrl("/v1/shoppingchannel");
-        subMenu2.setSortOrder(2);
-
-        menu.getMenuList().addAll(Arrays.asList(subMenu1, subMenu2));
-
-        this.menuRepository.save(menu);
-
-        return Arrays.asList(menu, subMenu1, subMenu2);
-    }
-
-    private List<Menu> saveInitServiceMgt() {
-        Menu menu = new Menu();
-        menu.setDepth(1);
-        menu.setMenuName("서비스관리");
-        menu.setSortOrder(2);
-
-        Menu subMenu1 = new Menu();
-        subMenu1.setMenuId(menu.getMenuId());
-        subMenu1.setDepth(2);
-        subMenu1.setMenuName("메뉴관리");
-        subMenu1.setMenuUrl("/v1/appmenus");
-        subMenu1.setSortOrder(1);
-
-        Menu subMenu2 = new Menu();
-        subMenu2.setMenuId(menu.getMenuId());
-        subMenu2.setDepth(2);
-        subMenu2.setMenuName("컨테이너관리");
-        subMenu2.setMenuUrl("/v1/containers");
-        subMenu2.setSortOrder(2);
-
-        Menu subMenu3 = new Menu();
-        subMenu3.setMenuId(menu.getMenuId());
-        subMenu3.setDepth(2);
-        subMenu3.setMenuName("카테고리관리");
-        subMenu3.setMenuUrl("/v1/category");
-        subMenu3.setSortOrder(3);
-
-        Menu subMenu4 = new Menu();
-        subMenu4.setMenuId(menu.getMenuId());
-        subMenu4.setDepth(2);
-        subMenu4.setMenuName("편성조회");
-        subMenu4.setMenuUrl("/v1/mainproduct");
-        subMenu4.setSortOrder(4);
-
-        menu.getMenuList().addAll(Arrays.asList(subMenu1, subMenu2, subMenu3, subMenu4));
-
-        this.menuRepository.save(menu);
-
-        return Arrays.asList(menu, subMenu1, subMenu2, subMenu3, subMenu4);
-    }
-
-    private List<Menu> saveInitOperationMgt() {
+    private List<Menu> saveDefaultMenu() {
         Menu menu = new Menu();
         menu.setDepth(1);
         menu.setMenuName("운영관리");
-        menu.setSortOrder(3);
+        menu.setSortOrder(1);
 
         Menu subMenu1 = new Menu();
         subMenu1.setMenuId(menu.getMenuId());
@@ -221,10 +151,10 @@ public class InitializationService implements CommandLineRunner {
         subMenu2.setMenuId(menu.getMenuId());
         subMenu2.setDepth(2);
         subMenu2.setMenuName("그룹관리");
-        subMenu2.setMenuUrl("/v1/authority");
+        subMenu2.setMenuUrl("/v1/authorities");
         subMenu2.setSortOrder(2);
 
-        menu.getMenuList().addAll(Arrays.asList(subMenu1, subMenu2));
+        menu.getMenus().addAll(Arrays.asList(subMenu1, subMenu2));
 
         this.menuRepository.save(menu);
 

@@ -2,8 +2,8 @@ package my.springcloud.account.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import my.springcloud.common.constants.ResponseCodeType;
-import my.springcloud.common.model.dto.auth.AuthCheckDto;
-import my.springcloud.common.model.dto.auth.TokenDto;
+import my.springcloud.common.model.auth.AuthCheck;
+import my.springcloud.common.model.auth.TokenDetail;
 import my.springcloud.common.sec.model.CustomUserDetails;
 import my.springcloud.common.sec.model.CustomUserDetailsHelper;
 import my.springcloud.common.wrapper.CommonModel;
@@ -46,7 +46,7 @@ public class AdminAuthenticationFilter extends UsernamePasswordAuthenticationFil
     @SneakyThrows
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
-        AuthCheckDto authCheck = this.objectMapper.readValue(request.getInputStream(), AuthCheckDto.class);
+        AuthCheck authCheck = this.objectMapper.readValue(request.getInputStream(), AuthCheck.class);
 		log.debug("> 로그인 시도: {}", authCheck.toString());
 
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(authCheck, "");
@@ -75,7 +75,7 @@ public class AdminAuthenticationFilter extends UsernamePasswordAuthenticationFil
 
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().write(this.objectMapper.writeValueAsString(new CommonModel<>(responseCodeType, new TokenDto(accessToken, refreshToken))));
+        response.getWriter().write(this.objectMapper.writeValueAsString(new CommonModel<>(responseCodeType, new TokenDetail(accessToken, refreshToken))));
         response.flushBuffer();
     }
 

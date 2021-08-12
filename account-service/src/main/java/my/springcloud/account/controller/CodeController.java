@@ -1,7 +1,7 @@
 package my.springcloud.account.controller;
 
 import my.springcloud.account.service.CodeService;
-import my.springcloud.common.model.dto.CodeDto;
+import my.springcloud.common.model.CodeDetail;
 import my.springcloud.common.utils.CodeUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,7 +33,7 @@ public class CodeController {
 //                    @SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
 //            },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = CodeDto.class)))
+                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = CodeDetail.class)))
             }
     )
     @GetMapping(value = "/account-status")
@@ -49,7 +49,7 @@ public class CodeController {
 //                    @SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
 //            },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = CodeDto.class)))
+                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = CodeDetail.class)))
             }
     )
     @GetMapping(value = "/company")
@@ -65,7 +65,7 @@ public class CodeController {
 //                    @SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
 //            },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = CodeDto.class)))
+                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = CodeDetail.class)))
             }
     )
     @GetMapping(value = "/authority")

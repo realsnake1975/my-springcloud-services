@@ -1,18 +1,16 @@
 package my.springcloud.account.service;
 
-import com.lguplus.homeshoppingmoa.common.api.AuthApiClient;
-import com.lguplus.homeshoppingmoa.common.api.LogoutApiClient;
-import com.lguplus.homeshoppingmoa.common.api.UplusApiClient;
-import my.springcloud.account.model.aggregate.Account;
-import my.springcloud.account.model.entity.LoginHistory;
-import my.springcloud.account.repository.AccountRepository;
-import my.springcloud.account.repository.LoginHistoryRepository;
+import my.springcloud.account.domain.aggregate.Account;
+import my.springcloud.account.domain.entity.LoginHistory;
+import my.springcloud.account.domain.repository.AccountRepository;
+import my.springcloud.account.domain.repository.LoginHistoryRepository;
+import my.springcloud.common.api.AuthApiClient;
+import my.springcloud.common.api.LogoutApiClient;
 import my.springcloud.common.constants.AccountStatusType;
 import my.springcloud.common.constants.ResponseCodeType;
 import my.springcloud.common.exception.ResourceNotFoundException;
 import my.springcloud.common.exception.ServiceException;
-import my.springcloud.common.model.dto.auth.*;
-import my.springcloud.common.model.dto.upluslegacy.OtpSmsSendDto;
+import my.springcloud.common.model.auth.*;
 import my.springcloud.common.sec.model.CustomUserDetails;
 import my.springcloud.common.sec.model.CustomUserDetailsHelper;
 import my.springcloud.common.wrapper.CommonModel;
@@ -50,7 +48,6 @@ public class AuthService {
 
     private final AuthApiClient authApiClient;
     private final LogoutApiClient logoutApiClient;
-    private final UplusApiClient uplusApiClient;
 
     @Value("${spring.profiles.active}")
     private String springProfilesActive;
@@ -65,7 +62,7 @@ public class AuthService {
     }
 
     @Transactional(noRollbackFor = { AdminAuthException.class })
-    public String login(LoginDto dto) {
+    public String login(LoginCheck dto) {
         Account account = this.accountRepository.findByUsername(dto.getUsername()).orElseThrow(ResourceNotFoundException::new);
 
         this.checkAccountStatus(account.getStatus());
@@ -157,14 +154,15 @@ public class AuthService {
                 });
 
         // OTP SMS 발송
-        OtpSmsSendDto dto = new OtpSmsSendDto(otp, account.getPhoneNumber());
-        CommonModel<Boolean> cm = this.uplusApiClient.sendOtp(dto);
-
-        return cm.getResult();
+//        OtpSmsSendDto dto = new OtpSmsSendDto(otp, account.getPhoneNumber());
+//        CommonModel<Boolean> cm = this.uplusApiClient.sendOtp(dto);
+//
+//        return cm.getResult();
+        return true;
     }
 
     @Transactional
-    public TokenDto refreshAccessToken(String refreshToken) {
+    public TokenDetail refreshAccessToken(String refreshToken) {
         CustomUserDetailsHelper tokenHelper = new CustomUserDetailsHelper();
         CustomUserDetails admin;
 
@@ -181,7 +179,7 @@ public class AuthService {
         String newAccessToken = tokenHelper.generateAccessToken(admin);
         String newRefreshToken = tokenHelper.generateRefreshToken(admin);
 
-        return new TokenDto(newAccessToken, newRefreshToken);
+        return new TokenDetail(newAccessToken, newRefreshToken);
     }
 
     @Transactional(noRollbackFor = { AdminAuthException.class })
@@ -235,7 +233,7 @@ public class AuthService {
     }
 
     @Transactional
-    public boolean changePassword(CustomUserDetails admin, PasswordUpdateDto dto) {
+    public boolean changePassword(CustomUserDetails admin, PasswordUpdate dto) {
         Account account = this.accountRepository.findById(admin.getAccountId()).orElseThrow(ResourceNotFoundException::new);
 
         if (this.passwordEncoder.matches(dto.getNewPassword(), account.getPassword())) { // 이전 비밀번호와 동일 비번 사용불가
@@ -259,7 +257,7 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
-    public String checkPassword(CustomUserDetails admin, PasswordCheckDto dto) {
+    public String checkPassword(CustomUserDetails admin, PasswordCheck dto) {
         Account account = this.accountRepository.findById(admin.getAccountId()).orElseThrow(ResourceNotFoundException::new);
 
         if (this.passwordEncoder.matches(dto.getNowPassword(), account.getPassword())) {
@@ -293,7 +291,7 @@ public class AuthService {
         }
     }
 
-    public CommonModel<TokenDto> authFinal(AuthCheckDto dto) {
+    public CommonModel<TokenDetail> authFinal(AuthCheck dto) {
         log.debug("> AuthCheckDto: {}", dto.toString());
         return this.authApiClient.authFinal(dto);
     }

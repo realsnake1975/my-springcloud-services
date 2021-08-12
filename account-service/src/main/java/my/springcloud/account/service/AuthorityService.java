@@ -1,20 +1,20 @@
 package my.springcloud.account.service;
 
-import my.springcloud.account.repository.MenuAuthorityRepository;
+import my.springcloud.account.domain.repository.MenuAuthorityRepository;
 import my.springcloud.common.exception.ResourceNotFoundException;
 import my.springcloud.common.exception.ServiceException;
-import my.springcloud.common.model.dto.account.AuthorityDto;
-import my.springcloud.common.model.dto.account.AuthorityHandleDto;
-import my.springcloud.common.model.dto.account.MenuDto;
+import my.springcloud.common.model.account.AuthorityDetail;
+import my.springcloud.common.model.account.AuthorityHandle;
+import my.springcloud.common.model.account.MenuDetail;
 import my.springcloud.common.sec.model.CustomUserDetails;
-import my.springcloud.account.model.aggregate.Authority;
-import my.springcloud.account.model.entity.Menu;
-import my.springcloud.account.model.entity.MenuAuthority;
-import my.springcloud.account.model.mapper.AuthorityMapper;
-import my.springcloud.account.model.mapper.MenuMapper;
-import my.springcloud.account.model.spec.AuthoritySpec;
-import my.springcloud.account.repository.AuthorityRepository;
-import my.springcloud.account.repository.MenuRepository;
+import my.springcloud.account.domain.aggregate.Authority;
+import my.springcloud.account.domain.entity.Menu;
+import my.springcloud.account.domain.entity.MenuAuthority;
+import my.springcloud.account.mapper.AuthorityMapper;
+import my.springcloud.account.mapper.MenuMapper;
+import my.springcloud.account.domain.spec.AuthoritySpec;
+import my.springcloud.account.domain.repository.AuthorityRepository;
+import my.springcloud.account.domain.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -56,14 +56,14 @@ public class AuthorityService {
      * @return
      */
     @Transactional(readOnly = true)
-    public AuthorityDto find(UserDetails userDetails, long id) {
+    public AuthorityDetail find(UserDetails userDetails, long id) {
         log.info("[REQ 권한 단건 조회] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
         log.debug("> 권한 단건 조회 id: {}", id);
         Authority appMenu = this.findById(id);
-        AuthorityDto authorityDto = this.authorityMapper.toDto(appMenu);
-        authorityDto.convertXss();
+        AuthorityDetail authorityDetail = this.authorityMapper.toDto(appMenu);
+        authorityDetail.convertXss();
         log.info("[RES 권한 단건 조회] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
-        return authorityDto;
+        return authorityDetail;
     }
 
     /**
@@ -74,10 +74,10 @@ public class AuthorityService {
      * @return
      */
     @Transactional(readOnly = true)
-    public Page<AuthorityDto> find(UserDetails userDetails, AuthoritySpec spec, Pageable pageable) {
+    public Page<AuthorityDetail> find(UserDetails userDetails, AuthoritySpec spec, Pageable pageable) {
         log.info("[REQ 권한 목록 조회] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
         Page<Authority> page = this.authorityRepository.findAll(spec, pageable);
-        Page<AuthorityDto> pageDto = page.map(this.authorityMapper::toDto);
+        Page<AuthorityDetail> pageDto = page.map(this.authorityMapper::toDto);
         log.info("[RES 권한 목록 조회] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
         return pageDto.map(authorityDto -> {
             authorityDto.convertXss();
@@ -89,21 +89,21 @@ public class AuthorityService {
      * 권한 등록
      *
      * @param userDetails
-     * @param authorityHandleDto
+     * @param authorityHandle
      * @return
      */
     @Transactional
-    public AuthorityDto create(@AuthenticationPrincipal UserDetails userDetails, AuthorityHandleDto authorityHandleDto) {
+    public AuthorityDetail create(@AuthenticationPrincipal UserDetails userDetails, AuthorityHandle authorityHandle) {
         try{
             log.info("[REQ 권한 등록] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
-            log.debug("> 권한 등록 authorityHandleDto: {}", authorityHandleDto.toString());
+            log.debug("> 권한 등록 authorityHandleDto: {}", authorityHandle.toString());
             CustomUserDetails loginUser = (CustomUserDetails) userDetails;
 //        log.debug("> 인증(권한) 확인, username: {}, name: {}, roles: {}", loginUser.getUsername(), loginUser.getName(), loginUser.getAuthorities());
 
-            authorityHandleDto.setRegId(loginUser.getUsername());
-            authorityHandleDto.setUpdId(loginUser.getUsername());
+            authorityHandle.setRegId(loginUser.getUsername());
+            authorityHandle.setUpdId(loginUser.getUsername());
 
-            Authority authority = authorityMapper.toEntity(authorityHandleDto);
+            Authority authority = authorityMapper.toEntity(authorityHandle);
             authorityRepository.save(authority);
 
             List<Menu> menuList = menuRepository.findAllByParentMenuIdIsNullOrderBySortOrderAsc();
@@ -112,12 +112,12 @@ public class AuthorityService {
             int i = 0;
 
             for (Menu m1 : menuList) {
-                for ( Menu m2 : m1.getMenuList() ) {
+                for ( Menu m2 : m1.getMenus() ) {
                     MenuAuthority menuAuthority = new MenuAuthority();
                     menuAuthority.setAuthorityId(authority.getAuthorityId());
                     menuAuthority.setMenu(m2);
-                    menuAuthority.setReadYn(authorityHandleDto.getReadYn().get(i));
-                    menuAuthority.setControlYn(authorityHandleDto.getControlYn().get(i++));
+                    menuAuthority.setReadYn(authorityHandle.getReadYn().get(i));
+                    menuAuthority.setControlYn(authorityHandle.getControlYn().get(i++));
                     menuAuthorityList.add(menuAuthority);
                 }
             }
@@ -125,10 +125,10 @@ public class AuthorityService {
             authority.setMenuAuthorityList(menuAuthorityList);
 
             authorityRepository.save(authority);
-            AuthorityDto returnAuthorityDto = authorityMapper.toDto(authority);
-            returnAuthorityDto.convertXss();
+            AuthorityDetail returnAuthorityDetail = authorityMapper.toDto(authority);
+            returnAuthorityDetail.convertXss();
 
-            return returnAuthorityDto;
+            return returnAuthorityDetail;
         } catch (ServiceException se) {
             log.error(se.getResponseCodeType().desc());
             throw new ServiceException(se.getResponseCodeType(), se);
@@ -142,14 +142,14 @@ public class AuthorityService {
      *
      * @param userDetails
      * @param id
-     * @param authorityHandleDto
+     * @param authorityHandle
      * @return
      */
     @Transactional
-    public AuthorityDto modify(@AuthenticationPrincipal UserDetails userDetails, long id, AuthorityHandleDto authorityHandleDto) {
+    public AuthorityDetail modify(@AuthenticationPrincipal UserDetails userDetails, long id, AuthorityHandle authorityHandle) {
         try {
             log.info("[REQ 권한 수정] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
-            log.debug("> 권한 수정 id: {}, AuthorityHandleDto: {}", id, authorityHandleDto.toString());
+            log.debug("> 권한 수정 id: {}, AuthorityHandleDto: {}", id, authorityHandle.toString());
             CustomUserDetails loginUser = (CustomUserDetails) userDetails;
 //        log.debug("> 인증(권한) 확인, username: {}, name: {}, roles: {}", loginUser.getUsername(), loginUser.getName(), loginUser.getAuthorities());
 
@@ -158,10 +158,10 @@ public class AuthorityService {
             authority.setUpdId(userDetails.getUsername());
             authority.setUpdDt(LocalDateTime.now());
 
-            if (!authorityMapper.toDto(authority).equals(authorityHandleDto)) {
-                authority.setAuthorityName(authorityHandleDto.getAuthorityName());
-                authority.setDescription(authorityHandleDto.getDescription());
-                authority.setUseYn(authorityHandleDto.getUseYn());
+            if (!authorityMapper.toDto(authority).equals(authorityHandle)) {
+                authority.setAuthorityName(authorityHandle.getAuthorityName());
+                authority.setDescription(authorityHandle.getDescription());
+                authority.setUseYn(authorityHandle.getUseYn());
             }
 
             List<Menu> menuList = menuRepository.findAllByParentMenuIdIsNullOrderBySortOrderAsc();
@@ -170,16 +170,16 @@ public class AuthorityService {
             int i = 0;
 
             for (Menu m1 : menuList) {
-                for ( Menu m2 : m1.getMenuList() ) {
+                for ( Menu m2 : m1.getMenus() ) {
                     MenuAuthority menuAuthority = menuAuthorityRepository.findByAuthorityIdAndMenuMenuId(id, m2.getMenuId());
-                    menuAuthority.setReadYn(authorityHandleDto.getReadYn().get(i));
-                    menuAuthority.setControlYn(authorityHandleDto.getControlYn().get(i++));
+                    menuAuthority.setReadYn(authorityHandle.getReadYn().get(i));
+                    menuAuthority.setControlYn(authorityHandle.getControlYn().get(i++));
                 }
             }
-            AuthorityDto returnAuthorityDto = authorityMapper.toDto(authority);
-            returnAuthorityDto.convertXss();
+            AuthorityDetail returnAuthorityDetail = authorityMapper.toDto(authority);
+            returnAuthorityDetail.convertXss();
 
-            return returnAuthorityDto;
+            return returnAuthorityDetail;
         } catch (ServiceException se) {
             log.error(se.getResponseCodeType().desc());
             throw new ServiceException(se.getResponseCodeType(), se);
@@ -194,7 +194,7 @@ public class AuthorityService {
      * @return
      */
     @Transactional(readOnly = true)
-    public List<MenuDto> findMenu() {
+    public List<MenuDetail> findMenu() {
         log.info("[REQ 메뉴 목록 조회] 사용자ID: {}, url: {}", "", this.request.getRequestURL().toString());
         List<Menu> menuList = this.menuRepository.findAll();
         log.info("[RES 메뉴 목록 조회] 사용자ID: {}, url: {}", "", this.request.getRequestURL().toString());
@@ -207,10 +207,10 @@ public class AuthorityService {
      * @return 권한 목록
      */
     @Transactional(readOnly = true)
-    public List<AuthorityDto> findAll() {
-        List<AuthorityDto> authorityDtoList = this.authorityRepository.findAll().stream().map(this.authorityMapper::toDto).collect(Collectors.toList());
-        authorityDtoList.forEach(authorityDto -> authorityDto.convertXss());
-        return authorityDtoList;
+    public List<AuthorityDetail> findAll() {
+        List<AuthorityDetail> authorityDetailList = this.authorityRepository.findAll().stream().map(this.authorityMapper::toDto).collect(Collectors.toList());
+        authorityDetailList.forEach(authorityDto -> authorityDto.convertXss());
+        return authorityDetailList;
     }
 
 }

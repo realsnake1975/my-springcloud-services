@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import my.springcloud.common.constants.CommonConstants;
 import my.springcloud.common.constants.ResponseCodeType;
 import my.springcloud.common.exception.ServiceException;
-import my.springcloud.common.model.dto.auth.LoginDto;
+import my.springcloud.common.model.auth.LoginCheck;
 import my.springcloud.common.sec.model.CustomUserDetails;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -87,8 +87,8 @@ public class CustomLoggerAspect extends LoggerAspect {
             }
             else if (auth instanceof AnonymousAuthenticationToken) {
                 try {
-                    LoginDto loginDto = this.objectMapper.readValue(request.getInputStream(), LoginDto.class);
-                    loginId = loginDto.getUsername();
+                    LoginCheck loginCheck = this.objectMapper.readValue(request.getInputStream(), LoginCheck.class);
+                    loginId = loginCheck.getUsername();
                 }
                 catch (Exception ignored) {
                     //

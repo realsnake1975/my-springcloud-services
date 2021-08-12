@@ -66,7 +66,6 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
         filterExceptionHandler.onAuthFail(response, responseCodeType);
     }
 
-    @SuppressWarnings("deprecation")
     private Authentication getAuthentication(HttpServletRequest request) {
         String token = request.getHeader(CommonConstants.TOKEN_HEADER);
         log.debug("> token: {}", token);

@@ -1,7 +1,7 @@
 package my.springcloud.common.utils;
 
 import my.springcloud.common.constants.*;
-import my.springcloud.common.model.dto.CodeDto;
+import my.springcloud.common.model.CodeDetail;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,9 +12,9 @@ public class CodeUtils {
         throw new IllegalStateException("Utility class");
     }
 
-    public static List<CodeDto> getAccountStatusType() {
+    public static List<CodeDetail> getAccountStatusType() {
         return AccountStatusType.sortedValues().stream()
-                .map(e -> new CodeDto(e.code(), e.desc(), e.defaultConfigYn()))
+                .map(e -> new CodeDetail(e.code(), e.desc(), e.defaultConfigYn()))
                 .collect(Collectors.toList());
     }
 

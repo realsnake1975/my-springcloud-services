@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice(
         basePackages = {
-				"com.lguplus.homeshoppingmoa.operation.controller",
+				"my.springcloud.account.controller",
         }
 )
 public class SuccessBodyAdvice extends ResponseSuccessAdvice {

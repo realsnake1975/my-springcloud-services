@@ -1,6 +1,6 @@
 package my.springcloud.account.service;
 
-import my.springcloud.common.model.dto.auth.AuthCheckDto;
+import my.springcloud.common.model.auth.AuthCheck;
 import my.springcloud.common.sec.model.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ public class AdminAuthenticationProvider extends AbstractUserDetailsAuthenticati
 
     @Override
     protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) {
-		final AuthCheckDto authCheck = (AuthCheckDto) authentication.getPrincipal();
+		final AuthCheck authCheck = (AuthCheck) authentication.getPrincipal();
         return this.adminDetailsService.checkLoginHistoryAndFindUser(authCheck);
     }
 

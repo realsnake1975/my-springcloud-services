@@ -1,9 +1,9 @@
 package my.springcloud.account.service;
 
-import my.springcloud.account.repository.MenuRepository;
-import my.springcloud.common.model.dto.account.MenuDto;
-import my.springcloud.account.model.entity.Menu;
-import my.springcloud.account.model.mapper.MenuMapper;
+import my.springcloud.account.domain.repository.MenuRepository;
+import my.springcloud.common.model.account.MenuDetail;
+import my.springcloud.account.domain.entity.Menu;
+import my.springcloud.account.mapper.MenuMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class MenuService {
      * @return
      */
     @Transactional(readOnly = true)
-    public List<MenuDto> findMenu() {
+    public List<MenuDetail> findMenu() {
         log.info("[REQ ] 사용자ID: {}, url: {}", "", this.request.getRequestURL().toString());
         List<Menu> menuList = this.menuRepository.findAll();
         log.info("[RES ] 사용자ID: {}, url: {}", "", this.request.getRequestURL().toString());

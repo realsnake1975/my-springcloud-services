@@ -4,7 +4,7 @@ import my.springcloud.common.logging.CustomLogger;
 import my.springcloud.common.logging.SubSvcClassType;
 import my.springcloud.common.logging.SvcClassType;
 import my.springcloud.common.logging.SvcType;
-import my.springcloud.common.model.dto.auth.AuthCheckDto;
+import my.springcloud.common.model.auth.AuthCheck;
 import my.springcloud.account.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -36,8 +36,7 @@ public class AuthRestController {
     )
     @CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H30)
     @PostMapping("/auth/check-otp")
-    public ResponseEntity checkOtp(@RequestBody AuthCheckDto dto) {
-        // String accessToken = this.apiClient.checkOtp(dto).headers().getOrDefault(CommonConstants.TOKEN_HEADER, Collections.singleton("")).iterator().next();
+    public ResponseEntity checkOtp(@RequestBody AuthCheck dto) {
         return ResponseEntity.ok(this.authService.authFinal(dto));
     }
 

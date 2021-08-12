@@ -4,7 +4,7 @@ import my.springcloud.common.logging.CustomLogger;
 import my.springcloud.common.logging.SubSvcClassType;
 import my.springcloud.common.logging.SvcClassType;
 import my.springcloud.common.logging.SvcType;
-import my.springcloud.common.model.dto.account.MenuDto;
+import my.springcloud.common.model.account.MenuDetail;
 import my.springcloud.config.swagger.OpenApiConfig;
 import my.springcloud.account.service.MenuService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,7 +38,7 @@ public class MenuController {
                     @SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
             },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = MenuDto.class)))
+                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = MenuDetail.class)))
             }
     )
     @CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H42)

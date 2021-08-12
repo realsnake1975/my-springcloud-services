@@ -1,14 +1,14 @@
 package my.springcloud.account.controller;
 
-import my.springcloud.account.model.spec.AccountSpec;
+import my.springcloud.account.domain.spec.AccountSpec;
 import my.springcloud.account.service.AccountService;
 import my.springcloud.common.logging.CustomLogger;
 import my.springcloud.common.logging.SubSvcClassType;
 import my.springcloud.common.logging.SvcClassType;
 import my.springcloud.common.logging.SvcType;
-import my.springcloud.common.model.dto.account.AccountCreateDto;
-import my.springcloud.common.model.dto.account.AccountDto;
-import my.springcloud.common.model.dto.account.AccountModifyDto;
+import my.springcloud.common.model.account.AccountCreate;
+import my.springcloud.common.model.account.AccountDetail;
+import my.springcloud.common.model.account.AccountModify;
 import my.springcloud.config.swagger.OpenApiConfig;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -61,13 +61,13 @@ public class AccountController {
                     @SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
             },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDto.class)))
+                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDetail.class)))
             }
     )
     @CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H32)
     @PostMapping(value = "")
-    public <U extends UserDetails> ResponseEntity create(@AuthenticationPrincipal U principal, @RequestBody AccountCreateDto accountCreateDto) {
-        return ResponseEntity.ok(this.accountService.create(principal, accountCreateDto));
+    public <U extends UserDetails> ResponseEntity create(@AuthenticationPrincipal U principal, @RequestBody AccountCreate accountCreate) {
+        return ResponseEntity.ok(this.accountService.create(principal, accountCreate));
     }
 
     @SuppressWarnings("rawtypes")
@@ -78,7 +78,7 @@ public class AccountController {
                     @SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
             },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDto.class)))
+                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDetail.class)))
             }
     )
     @CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H35)
@@ -105,7 +105,7 @@ public class AccountController {
                     @Parameter(name = "sort", in = ParameterIn.QUERY, required = false, description = "정렬 조건(sort=regDt,asc,username,asc,accountName,asc)", example = "")
             },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDto.class)))
+                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDetail.class)))
             }
     )
     @CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H36)
@@ -133,13 +133,13 @@ public class AccountController {
                     @SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
             },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDto.class)))
+                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDetail.class)))
             }
     )
     @CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H33)
     @PutMapping(value = "/{id}")
-    public <U extends UserDetails> ResponseEntity modify(@AuthenticationPrincipal U principal, @PathVariable long id, @RequestBody AccountModifyDto accountModifyDto) {
-        return ResponseEntity.ok(accountService.modify(principal, id, accountModifyDto));
+    public <U extends UserDetails> ResponseEntity modify(@AuthenticationPrincipal U principal, @PathVariable long id, @RequestBody AccountModify accountModify) {
+        return ResponseEntity.ok(accountService.modify(principal, id, accountModify));
     }
 
     @SuppressWarnings("rawtypes")

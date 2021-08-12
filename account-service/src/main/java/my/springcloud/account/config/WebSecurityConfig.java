@@ -47,7 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	        .csrf().disable()
 	        .authorizeRequests()
             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-	        .antMatchers("/opr/v1/auth/**", "/opr/v1/codes/**", "/health-hssvc").permitAll()
+	        .antMatchers("/opr/v1/auth/**", "/opr/v1/codes/**").permitAll()
 	        .anyRequest().authenticated()
             .accessDecisionManager(this.accessDecisionManager())
 	        .and()
@@ -83,7 +83,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Collections.singletonList("*"));
-        // configuration.setAllowedMethods(Collections.singletonList("*"));
         configuration.setAllowedMethods(Arrays.asList(
                 HttpMethod.HEAD.name(),
                 HttpMethod.OPTIONS.name(),
@@ -109,8 +108,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/actuator/**"
-                , "/opr/swagger-ui.html"
-                , "/opr/swagger*/**"
+                , "/swagger-ui.html"
+                , "/swagger*/**"
                 , "/webjars/**"
                 , "/h2-console*/**"
                 , "/favicon.ico"

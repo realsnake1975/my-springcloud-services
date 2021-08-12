@@ -1,18 +1,18 @@
 package my.springcloud.account.service;
 
-import my.springcloud.account.model.spec.AccountSpec;
-import my.springcloud.account.repository.LoginHistoryRepository;
+import my.springcloud.account.domain.spec.AccountSpec;
+import my.springcloud.account.domain.repository.LoginHistoryRepository;
 import my.springcloud.common.constants.AccountStatusType;
 import my.springcloud.common.constants.ResponseCodeType;
 import my.springcloud.common.exception.ResourceNotFoundException;
 import my.springcloud.common.exception.ServiceException;
-import my.springcloud.common.model.dto.account.AccountDto;
-import my.springcloud.common.model.dto.account.AccountModifyDto;
+import my.springcloud.common.model.account.AccountDetail;
+import my.springcloud.common.model.account.AccountModify;
 import my.springcloud.common.sec.model.CustomUserDetails;
-import my.springcloud.account.model.aggregate.Account;
-import my.springcloud.account.model.mapper.AccountMapper;
-import my.springcloud.account.repository.AccountRepository;
-import my.springcloud.account.repository.AuthorityRepository;
+import my.springcloud.account.domain.aggregate.Account;
+import my.springcloud.account.mapper.AccountMapper;
+import my.springcloud.account.domain.repository.AccountRepository;
+import my.springcloud.account.domain.repository.AuthorityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -56,17 +56,17 @@ public class AccountService {
      * @return
      */
     @Transactional(readOnly = true)
-    public AccountDto find(UserDetails userDetails, long id) {
+    public AccountDetail find(UserDetails userDetails, long id) {
         log.info("[REQ 계정 단건 조회] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
         log.debug("> 계정 단건 조회 id: {}", id);
 
         Account account = this.findById(id);
-        AccountDto accountDto = this.accountMapper.toDto(account);
-        accountDto.setPassword("");
-        accountDto.convertXss();
+        AccountDetail accountDetail = this.accountMapper.toDto(account);
+        accountDetail.setPassword("");
+        accountDetail.convertXss();
 
         log.info("[RES 계정 단건 조회] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
-        return accountDto;
+        return accountDetail;
     }
 
     /**
@@ -77,11 +77,11 @@ public class AccountService {
      * @return
      */
     @Transactional(readOnly = true)
-    public Page<AccountDto> find(UserDetails userDetails, AccountSpec spec, Pageable pageable) {
+    public Page<AccountDetail> find(UserDetails userDetails, AccountSpec spec, Pageable pageable) {
         log.info("[REQ 계정 목록 조회] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
 
         Page<Account> page = this.accountRepository.findAll(spec, pageable);
-        Page<AccountDto> accountDtoPage = page.map(this.accountMapper::toDto);
+        Page<AccountDetail> accountDtoPage = page.map(this.accountMapper::toDto);
         accountDtoPage.getContent().forEach(accountDto -> accountDto.setPassword(""));
         log.info("[RES 계정 목록 조회] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
 
@@ -99,7 +99,7 @@ public class AccountService {
      * @return
      */
     @Transactional
-    public AccountDto create(@AuthenticationPrincipal UserDetails userDetails, AccountDto accountCreateDto) {
+    public AccountDetail create(@AuthenticationPrincipal UserDetails userDetails, AccountDetail accountCreateDto) {
         try {
             log.info("[REQ 계정 등록] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
             log.debug("> 계정 등록 accountCreateDto: {}", accountCreateDto.toString());
@@ -116,7 +116,7 @@ public class AccountService {
             String encodedPassword = passwordEncoder.encode(accountCreateDto.getPassword());
             accountCreateDto.setPassword(encodedPassword);
 
-            AccountDto returnDto = accountMapper.toDto(accountRepository.save(accountMapper.toEntity(accountCreateDto)));
+            AccountDetail returnDto = accountMapper.toDto(accountRepository.save(accountMapper.toEntity(accountCreateDto)));
             returnDto.setPassword("");
 
             returnDto.convertXss();
@@ -135,43 +135,43 @@ public class AccountService {
      *
      * @param userDetails
      * @param id
-     * @param accountModifyDto
+     * @param accountModify
      * @return
      */
     @Transactional
-    public AccountDto modify(@AuthenticationPrincipal UserDetails userDetails, long id, AccountModifyDto accountModifyDto) {
+    public AccountDetail modify(@AuthenticationPrincipal UserDetails userDetails, long id, AccountModify accountModify) {
         try {
             log.info("[REQ 계정 수정] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
-            log.debug("> 계정 수정 id: {}, accountModifyDto: {}", id, accountModifyDto);
+            log.debug("> 계정 수정 id: {}, accountModifyDto: {}", id, accountModify);
             CustomUserDetails loginUser = (CustomUserDetails) userDetails;
 //        log.debug("> 인증(권한) 확인, username: {}, name: {}, roles: {}", loginUser.getUsername(), loginUser.getName(), loginUser.getAuthorities());
 
             Account account = accountRepository.getOne(id);
 
-            if (!accountModifyDto.getPassword().equals("")
-                    && (this.checkPasswordPattern(accountModifyDto.getPassword()) == false
-                    || passwordEncoder.matches(accountModifyDto.getPassword(), account.getPassword()))) {
+            if (!accountModify.getPassword().equals("")
+                    && (this.checkPasswordPattern(accountModify.getPassword()) == false
+                    || passwordEncoder.matches(accountModify.getPassword(), account.getPassword()))) {
                 throw new ServiceException(ResponseCodeType.SERVER_ERROR_41001014);
             }
 
-            if (!accountMapper.toDto(account).equals(accountModifyDto)) {
-                if (!accountModifyDto.getPassword().equals("")) {
-                    String encodedPassword = passwordEncoder.encode(accountModifyDto.getPassword());
-                    accountModifyDto.setPassword(encodedPassword);
-                    account.setPassword(accountModifyDto.getPassword());
+            if (!accountMapper.toDto(account).equals(accountModify)) {
+                if (!accountModify.getPassword().equals("")) {
+                    String encodedPassword = passwordEncoder.encode(accountModify.getPassword());
+                    accountModify.setPassword(encodedPassword);
+                    account.setPassword(accountModify.getPassword());
                     account.setPasswordUpdDt(LocalDateTime.now());
                 }
-                account.setAuthority(authorityRepository.getOne(accountModifyDto.getAuthority().getAuthorityId()));
-                account.setPhoneNumber(accountModifyDto.getPhoneNumber());
-                account.setEmail(accountModifyDto.getEmail());
+                account.setAuthority(authorityRepository.getOne(accountModify.getAuthority().getAuthorityId()));
+                account.setPhoneNumber(accountModify.getPhoneNumber());
+                account.setEmail(accountModify.getEmail());
                 account.setUpdDt(LocalDateTime.now());
                 account.setUpdId(loginUser.getUsername());
             }
-            AccountDto accountDto = accountMapper.toDto(account);
-            accountDto.setPassword("");
+            AccountDetail accountDetail = accountMapper.toDto(account);
+            accountDetail.setPassword("");
 
-            accountDto.convertXss();
-            return accountDto;
+            accountDetail.convertXss();
+            return accountDetail;
         } catch (ServiceException se) {
             log.error("> {}", se.getResponseCodeType().desc());
             throw new ServiceException(se.getResponseCodeType(), se);
@@ -225,13 +225,13 @@ public class AccountService {
      * @return
      */
     @Transactional(readOnly = true)
-    public List<AccountDto> findAll() {
-        List<AccountDto> accountDtoList = this.accountRepository.findAll().stream().map(this.accountMapper::toDto).collect(Collectors.toList());
-        accountDtoList.stream().forEach(accountDto -> {
+    public List<AccountDetail> findAll() {
+        List<AccountDetail> accountDetailList = this.accountRepository.findAll().stream().map(this.accountMapper::toDto).collect(Collectors.toList());
+        accountDetailList.stream().forEach(accountDto -> {
             accountDto.setPassword("");
         });
-        accountDtoList.forEach(accountDto -> accountDto.convertXss());
-        return accountDtoList;
+        accountDetailList.forEach(accountDto -> accountDto.convertXss());
+        return accountDetailList;
     }
 
     /**

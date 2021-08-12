@@ -154,8 +154,8 @@ project(":service-common") {
         compileOnly("mysql:mysql-connector-java:${mysqlConnectorVersion}")
 
         // redis
-        api("org.springframework.boot:spring-boot-starter-data-redis")
-        api("org.apache.commons:commons-pool2")
+        // api("org.springframework.boot:spring-boot-starter-data-redis")
+        // api("org.apache.commons:commons-pool2")
 
         // https://log4jdbc.brunorozendo.com/
         api("org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16")
@@ -219,9 +219,6 @@ project(":account-service") {
         api project(":service-common")
 
         runtimeOnly("mysql:mysql-connector-java:${mysqlConnectorVersion}")
-
-        // HazelCast
-        implementation("com.hazelcast:hazelcast-all:4.2")
     }
 
     test {

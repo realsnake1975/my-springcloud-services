@@ -1,7 +1,7 @@
 package my.springcloud.account.service;
 
-import my.springcloud.account.model.aggregate.Account;
-import my.springcloud.common.model.dto.auth.AuthCheckDto;
+import my.springcloud.account.domain.aggregate.Account;
+import my.springcloud.common.model.auth.AuthCheck;
 import my.springcloud.common.sec.model.CustomUserDetails;
 import my.springcloud.account.exception.AdminAuthException;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class AdminDetailsService implements UserDetailsService {
     }
 
     @Transactional(noRollbackFor = { AdminAuthException.class })
-    public UserDetails checkLoginHistoryAndFindUser(AuthCheckDto authCheck) {
+    public UserDetails checkLoginHistoryAndFindUser(AuthCheck authCheck) {
         Account account = this.authService.checkLoginHistory(authCheck.getAuthToken(), authCheck.getOtp());
         String loginInfo = account.getUsername() + "," + account.getAccountName() + "," + account.getAuthority().getAuthorityId() + "," + account.getAccountId();
         return this.loadUserByUsername(loginInfo);

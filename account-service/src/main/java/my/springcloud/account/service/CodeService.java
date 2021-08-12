@@ -1,8 +1,8 @@
 package my.springcloud.account.service;
 
-import my.springcloud.common.model.dto.CodeDto;
-import my.springcloud.common.model.dto.account.AccountDto;
-import my.springcloud.common.model.dto.account.AuthorityDto;
+import my.springcloud.common.model.CodeDetail;
+import my.springcloud.common.model.account.AccountDetail;
+import my.springcloud.common.model.account.AuthorityDetail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,19 +19,19 @@ public class CodeService {
     private final AuthorityService authorityService;
     private final AccountService accountService;
 
-    public List<CodeDto> getAutorities() {
+    public List<CodeDetail> getAutorities() {
         return this.authorityService.findAll().stream()
-                .filter(AuthorityDto::getUseYn)
-                .map(a -> new CodeDto(String.valueOf(a.getAuthorityId()), a.getAuthorityName(), false))
+                .filter(AuthorityDetail::getUseYn)
+                .map(a -> new CodeDetail(String.valueOf(a.getAuthorityId()), a.getAuthorityName(), false))
                 .collect(Collectors.toList());
     }
 
-    public List<CodeDto> getCompanies() {
+    public List<CodeDetail> getCompanies() {
         return this.accountService.findAll().stream()
-                .map(AccountDto::getCompanyName)
+                .map(AccountDetail::getCompanyName)
                 .distinct()
-                .map(cn -> new CodeDto(cn, cn, false))
-                .sorted(Comparator.comparing(CodeDto::getCode))
+                .map(cn -> new CodeDetail(cn, cn, false))
+                .sorted(Comparator.comparing(CodeDetail::getCode))
                 .collect(Collectors.toList());
     }
 

@@ -5,7 +5,7 @@
     <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
 
 <!--    &lt;!&ndash;<appender name="FILE-LOGGER" class="ch.qos.logback.core.rolling.RollingFileAppender">&ndash;&gt;-->
-<!--    <appender name="FILE-LOGGER" class="com.lguplus.homeshoppingmoa.config.logging.CustomRollingFileAppender">-->
+<!--    <appender name="FILE-LOGGER" class="my.springcloud.config.logging.CustomRollingFileAppender">-->
 <!--        <encoder>-->
 <!--            <Pattern>%msg %n</Pattern>-->
 <!--        </encoder>-->
@@ -43,7 +43,7 @@
     </springProfile>
 
     <springProfile name="!local">
-<!--        <logger name="UPLUS-LOGGER" level="INFO" additivity="false">-->
+<!--        <logger name="MY-LOGGER" level="INFO" additivity="false">-->
 <!--            <appender-ref ref="CONSOLE" />-->
 <!--            <appender-ref ref="FILE-ASYNC-LOGGER" />-->
 <!--        </logger>-->

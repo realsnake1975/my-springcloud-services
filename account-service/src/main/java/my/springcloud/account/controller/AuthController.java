@@ -4,9 +4,9 @@ import my.springcloud.common.logging.CustomLogger;
 import my.springcloud.common.logging.SubSvcClassType;
 import my.springcloud.common.logging.SvcClassType;
 import my.springcloud.common.logging.SvcType;
-import my.springcloud.common.model.dto.auth.LoginDto;
-import my.springcloud.common.model.dto.auth.PasswordCheckDto;
-import my.springcloud.common.model.dto.auth.PasswordUpdateDto;
+import my.springcloud.common.model.auth.LoginCheck;
+import my.springcloud.common.model.auth.PasswordCheck;
+import my.springcloud.common.model.auth.PasswordUpdate;
 import my.springcloud.common.sec.model.CustomUserDetails;
 import my.springcloud.config.swagger.OpenApiConfig;
 import my.springcloud.account.service.AuthService;
@@ -43,7 +43,7 @@ public class AuthController {
     )
     @CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H28)
     @PostMapping("/auth/login")
-    public ResponseEntity login(@RequestBody LoginDto dto) {
+    public ResponseEntity login(@RequestBody LoginCheck dto) {
         return ResponseEntity.ok(this.authService.login(dto));
     }
 
@@ -87,7 +87,7 @@ public class AuthController {
     )
     @CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H31)
     @PutMapping("/accounts/change-password")
-    public <U extends UserDetails> ResponseEntity changePassword(@AuthenticationPrincipal U principal, @RequestBody PasswordUpdateDto dto) {
+    public <U extends UserDetails> ResponseEntity changePassword(@AuthenticationPrincipal U principal, @RequestBody PasswordUpdate dto) {
         return ResponseEntity.ok(this.authService.changePassword((CustomUserDetails) principal, dto));
     }
 
@@ -103,7 +103,7 @@ public class AuthController {
             }
     )
     @PostMapping("/accounts/check-password")
-    public <U extends UserDetails> ResponseEntity checkPassword(@AuthenticationPrincipal U principal, @RequestBody PasswordCheckDto dto) {
+    public <U extends UserDetails> ResponseEntity checkPassword(@AuthenticationPrincipal U principal, @RequestBody PasswordCheck dto) {
         return ResponseEntity.ok(this.authService.checkPassword((CustomUserDetails) principal, dto));
     }
 

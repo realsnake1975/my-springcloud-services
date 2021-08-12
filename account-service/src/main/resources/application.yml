@@ -1,24 +1,10 @@
-# server
-server:
-  port: ${PORT:9080}
-
-# spring, https://luvstudy.tistory.com/130
 spring:
+  cloud:
+    config:
+      name: account-service
+      profile: ${spring.profiles.active:local}
   config:
-    import: "configserver:http://config-server:8888"
-  application:
-    name: AccountService
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
-
-springdoc:
-  swagger-ui:
-    path: /opr/swagger-ui.html
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: refresh
+    import: configserver:${CONFIG_SERVER:http://localhost:8888}
+  output:
+    ansi:
+      enabled: always

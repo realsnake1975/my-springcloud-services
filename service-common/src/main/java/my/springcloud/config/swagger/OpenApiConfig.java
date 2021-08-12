@@ -55,14 +55,14 @@ public class OpenApiConfig {
                 .components(this.generateComponents())
                 .info(new Info()
                         .version("v1")
-						.title("LG UPLUS 홈쇼핑모아 API (" + Optional.ofNullable(this.appName).orElse("").toUpperCase() + ")")
-						.description("본 문서는 LG UPLUS 홈쇼핑모아 " + Optional.ofNullable(this.appName).orElse("").toUpperCase() + " API 입니다.")
+						.title("[" + Optional.ofNullable(this.appName).orElse("").toUpperCase() + "] API")
+						.description("my-cloud-services의 " + Optional.ofNullable(this.appName).orElse("").toUpperCase() + " API 문서입니다.")
                         .contact(new Contact()
-                                .name("LG UPLUS 홈쇼핑모아")
-                                .email("addr@email.com")
+                                .name("(주)리얼스네이크")
+                                .email("realsnake1975@gamil.com")
                                 .url("https://")
                         )
-                        .license(new License().name("Copyrightⓒ2021 LG UPLUS All rights reserved").url("https://"))
+                        .license(new License().name("Copyrightⓒ2021 realsnake All rights reserved").url("https://"))
                 );
     }
 

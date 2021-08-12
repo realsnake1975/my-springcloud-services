@@ -1,8 +1,8 @@
 package my.springcloud.account.config;
 
-import my.springcloud.account.model.aggregate.Authority;
-import my.springcloud.account.model.entity.MenuAuthority;
-import my.springcloud.account.repository.AuthorityRepository;
+import my.springcloud.account.domain.aggregate.Authority;
+import my.springcloud.account.domain.entity.MenuAuthority;
+import my.springcloud.account.domain.repository.AuthorityRepository;
 import my.springcloud.common.sec.model.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -78,11 +79,11 @@ public class AdminAccessDecisionVoter implements AccessDecisionVoter {
             List<GrantedAuthority> authorities = new ArrayList<>(admin.getAuthorities());
             String role = authorities.get(0).getAuthority();
 
-            long authorityId = Long.parseLong(delete(role, "ROLE_"));
+            long authorityId = Long.parseLong(StringUtils.delete(role, "ROLE_"));
             log.debug("> 권한 아이디(authorityId): {}, role: {}", authorityId, role);
 
             Optional<Authority> maybeAuthority = this.authorityRepository.findById(authorityId);
-            if (!maybeAuthority.isPresent()) {
+            if (maybeAuthority.isEmpty()) {
                 return ACCESS_DENIED;
             }
 

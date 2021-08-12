@@ -1,14 +1,14 @@
 package my.springcloud.account.controller;
 
-import my.springcloud.account.model.spec.AuthoritySpec;
+import my.springcloud.account.domain.spec.AuthoritySpec;
 import my.springcloud.account.service.AuthorityService;
 import my.springcloud.common.logging.CustomLogger;
 import my.springcloud.common.logging.SubSvcClassType;
 import my.springcloud.common.logging.SvcClassType;
 import my.springcloud.common.logging.SvcType;
-import my.springcloud.common.model.dto.account.AccountDto;
-import my.springcloud.common.model.dto.account.AuthorityDto;
-import my.springcloud.common.model.dto.account.AuthorityHandleDto;
+import my.springcloud.common.model.account.AccountDetail;
+import my.springcloud.common.model.account.AuthorityDetail;
+import my.springcloud.common.model.account.AuthorityHandle;
 import my.springcloud.config.swagger.OpenApiConfig;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "권한 API", description = "")
 @Slf4j
-@RequestMapping(value = "/opr/v1/authority", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/opr/v1/authorities", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 @RequiredArgsConstructor
 public class AuthorityController {
@@ -56,12 +56,12 @@ public class AuthorityController {
                     @SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
             },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDto.class)))
+                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDetail.class)))
             }
     )
     @CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H37)
     @PostMapping(value = "")
-    public <U extends UserDetails> ResponseEntity create(@AuthenticationPrincipal U principal, @RequestBody AuthorityHandleDto authorityCreateDto) {
+    public <U extends UserDetails> ResponseEntity create(@AuthenticationPrincipal U principal, @RequestBody AuthorityHandle authorityCreateDto) {
         return ResponseEntity.ok(this.authorityService.create(principal, authorityCreateDto));
     }
 
@@ -73,7 +73,7 @@ public class AuthorityController {
                     @SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
             },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AuthorityDto.class)))
+                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AuthorityDetail.class)))
             }
     )
     @CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H39)
@@ -96,7 +96,7 @@ public class AuthorityController {
                     @Parameter(name = "sort", in = ParameterIn.QUERY, required = false, description = "정렬 조건(sort=authorityId,asc)", example = "")
             },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDto.class)))
+                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDetail.class)))
             }
     )
     @CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H40)
@@ -122,14 +122,14 @@ public class AuthorityController {
                     @SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
             },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AuthorityHandleDto.class)))
+                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AuthorityHandle.class)))
             }
     )
     @CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H38)
     @PutMapping(value = "/{id}")
-    public <U extends UserDetails> ResponseEntity modify(@AuthenticationPrincipal U principal, @PathVariable long id, @RequestBody AuthorityHandleDto authorityHandleDto) {
+    public <U extends UserDetails> ResponseEntity modify(@AuthenticationPrincipal U principal, @PathVariable long id, @RequestBody AuthorityHandle authorityHandle) {
 
-        return ResponseEntity.ok(authorityService.modify(principal, id, authorityHandleDto));
+        return ResponseEntity.ok(authorityService.modify(principal, id, authorityHandle));
     }
 
     @SuppressWarnings("rawtypes")
@@ -142,7 +142,7 @@ public class AuthorityController {
             parameters = {
             },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDto.class)))
+                    @ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDetail.class)))
             }
     )
     @CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H42)
