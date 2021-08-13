@@ -30,7 +30,7 @@ public class Authority extends AbstractAggregateRoot<Authority> implements Seria
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "authority_id")
     @BatchSize(size = 100)
-    private List<MenuAuthority> menuAuthorityList = new ArrayList<>();
+    private List<MenuAuthority> menuAuthorities = new ArrayList<>();
 
     // 권한명
     @Column(name = "authority_name", nullable = false, length = 100)

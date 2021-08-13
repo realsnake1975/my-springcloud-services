@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 /**
  *  검수 확인시 Header에서 Reconfirm Token을 체크하는 인터셉터
  */
-
 @Slf4j
 @Component
 public class ReconfirmInterceptor implements HandlerInterceptor {
@@ -30,7 +29,7 @@ public class ReconfirmInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         if ("GET".equals(request.getMethod())) {
             log.debug("> [{}] url: {} status: PASS", request.getMethod(), request.getRequestURL());
             return true;
@@ -40,24 +39,15 @@ public class ReconfirmInterceptor implements HandlerInterceptor {
         CustomUserDetails admin = this.customUserDetailsHelper.getSimpleUser(jwtToken);
         String tempToken = request.getHeader(CommonConstants.RECONFIRM_TOKEN_HEADER);
 
-        return checkTempToken(admin.getAccountId(), tempToken);
+        return checkReconfirmToken(admin.getAccountId(), tempToken);
     }
 
-    private boolean checkTempToken(Long accountId, String tempToken) {
+    private boolean checkReconfirmToken(Long accountId, String tempToken) {
         try {
-            boolean tf = this.passwordEncoder.matches(String.valueOf(accountId), tempToken);
-            log.debug("> temp token 확인: accountId: {}, tempToken: {}, 매칭여부: {}", accountId, tempToken, tf);
-
-            if (tf) {
-                return true;
-            }
-            throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001002);
-        }
-        catch (IllegalArgumentException e) {
-            throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001002);
+            return this.passwordEncoder.matches(String.valueOf(accountId), tempToken);
         }
         catch (Exception e) {
-            log.error("> Invalid tempToken! token: {}, accountId: {}", tempToken, accountId, e);
+            log.error("Invalid reconfirmToken! token: {}, accountId: {}", tempToken, accountId, e);
             throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001002);
         }
     }

@@ -13,7 +13,7 @@ public class OtpDestroyingTask {
 
     private final LoginHistoryService service;
 
-    @Scheduled(cron = "1 * * * * *") // 매분 1초마다 실행
+    // @Scheduled(cron = "1 * * * * *") // 매분 1초마다 실행
     public void runDestroyOtp() {
         this.service.destroyOtp();
     }

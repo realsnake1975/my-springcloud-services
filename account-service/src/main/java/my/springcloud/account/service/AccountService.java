@@ -15,6 +15,7 @@ import my.springcloud.account.domain.repository.AccountRepository;
 import my.springcloud.account.domain.repository.AuthorityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import my.springcloud.common.utils.TextUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,12 +27,11 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
+@Service
 public class AccountService {
     private final PasswordEncoder passwordEncoder;
 
@@ -42,8 +42,6 @@ public class AccountService {
     private final LoginHistoryRepository loginHistoryRepository;
 
     private final HttpServletRequest request;
-
-    private final String TB_ACCOUNT_PK = "accountId";
 
     private Account findById(long id) {
         return this.accountRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
@@ -57,15 +55,14 @@ public class AccountService {
      */
     @Transactional(readOnly = true)
     public AccountDetail find(UserDetails userDetails, long id) {
-        log.info("[REQ 계정 단건 조회] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
-        log.debug("> 계정 단건 조회 id: {}", id);
+        log.info("[REQ 계정 단건 조회] 사용자 ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
 
         Account account = this.findById(id);
         AccountDetail accountDetail = this.accountMapper.toDto(account);
         accountDetail.setPassword("");
         accountDetail.convertXss();
 
-        log.info("[RES 계정 단건 조회] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
+        log.info("[RES 계정 단건 조회] 사용자 ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
         return accountDetail;
     }
 
@@ -78,56 +75,45 @@ public class AccountService {
      */
     @Transactional(readOnly = true)
     public Page<AccountDetail> find(UserDetails userDetails, AccountSpec spec, Pageable pageable) {
-        log.info("[REQ 계정 목록 조회] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
+        log.info("[REQ 계정 목록 조회] 사용자 ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
 
-        Page<Account> page = this.accountRepository.findAll(spec, pageable);
-        Page<AccountDetail> accountDtoPage = page.map(this.accountMapper::toDto);
-        accountDtoPage.getContent().forEach(accountDto -> accountDto.setPassword(""));
-        log.info("[RES 계정 목록 조회] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
+        Page<AccountDetail> accountPage = this.accountRepository.findAll(spec, pageable).map(a -> {
+            AccountDetail accountDetail = this.accountMapper.toDto(a);
+            accountDetail.setPassword("");
+            accountDetail.convertXss();
+            return accountDetail;
+        });
 
-        return accountDtoPage.map(accountDto -> {
-                    accountDto.convertXss();
-                    return accountDto;
-                });
+        log.info("[RES 계정 목록 조회] 사용자 ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
+        return accountPage;
     }
 
     /**
      * 계정 등록
      *
      * @param userDetails
-     * @param accountCreateDto
+     * @param accountCreate
      * @return
      */
     @Transactional
-    public AccountDetail create(@AuthenticationPrincipal UserDetails userDetails, AccountDetail accountCreateDto) {
-        try {
-            log.info("[REQ 계정 등록] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
-            log.debug("> 계정 등록 accountCreateDto: {}", accountCreateDto.toString());
-            CustomUserDetails loginUser = (CustomUserDetails) userDetails;
-//        log.debug("> 인증(권한) 확인, username: {}, name: {}, roles: {}", loginUser.getUsername(), loginUser.getName(), loginUser.getAuthorities());
+    public AccountDetail create(@AuthenticationPrincipal UserDetails userDetails, AccountDetail accountCreate) {
+        log.info("[REQ 계정 등록] 사용자 ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
 
-            if (!this.checkPasswordPattern(accountCreateDto.getPassword())) {
-                throw new ServiceException(ResponseCodeType.SERVER_ERROR_41001014);
-            }
+        PasswordValidator.validatePassword(accountCreate.getPassword());
 
-            accountCreateDto.setRegId(loginUser.getUsername());
-            accountCreateDto.setUpdId(loginUser.getUsername());
+        CustomUserDetails loginUser = (CustomUserDetails) userDetails;
+        accountCreate.setRegId(loginUser.getUsername());
+        accountCreate.setUpdId(loginUser.getUsername());
 
-            String encodedPassword = passwordEncoder.encode(accountCreateDto.getPassword());
-            accountCreateDto.setPassword(encodedPassword);
+        String encodedPassword = this.passwordEncoder.encode(accountCreate.getPassword());
+        accountCreate.setPassword(encodedPassword);
 
-            AccountDetail returnDto = accountMapper.toDto(accountRepository.save(accountMapper.toEntity(accountCreateDto)));
-            returnDto.setPassword("");
+        AccountDetail accountDetail = this.accountMapper.toDto(this.accountRepository.save(this.accountMapper.toEntity(accountCreate)));
+        accountDetail.setPassword("");
+        accountDetail.convertXss();
 
-            returnDto.convertXss();
-            return returnDto;
-        } catch (ServiceException se) {
-            log.error("> {}", se.getResponseCodeType().desc());
-            throw new ServiceException(se.getResponseCodeType(), se);
-        } finally {
-            log.info("[RES 계정 등록] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
-        }
-
+        log.info("[RES 계정 등록] 사용자 ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
+        return accountDetail;
     }
 
     /**
@@ -140,44 +126,39 @@ public class AccountService {
      */
     @Transactional
     public AccountDetail modify(@AuthenticationPrincipal UserDetails userDetails, long id, AccountModify accountModify) {
-        try {
-            log.info("[REQ 계정 수정] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
-            log.debug("> 계정 수정 id: {}, accountModifyDto: {}", id, accountModify);
-            CustomUserDetails loginUser = (CustomUserDetails) userDetails;
-//        log.debug("> 인증(권한) 확인, username: {}, name: {}, roles: {}", loginUser.getUsername(), loginUser.getName(), loginUser.getAuthorities());
+        log.info("[REQ 계정 수정] 사용자 ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
 
-            Account account = accountRepository.getOne(id);
+        PasswordValidator.validatePassword(accountModify.getPassword());
 
-            if (!accountModify.getPassword().equals("")
-                    && (this.checkPasswordPattern(accountModify.getPassword()) == false
-                    || passwordEncoder.matches(accountModify.getPassword(), account.getPassword()))) {
-                throw new ServiceException(ResponseCodeType.SERVER_ERROR_41001014);
-            }
+        CustomUserDetails loginUser = (CustomUserDetails) userDetails;
+        Account account = this.findById(id);
 
-            if (!accountMapper.toDto(account).equals(accountModify)) {
-                if (!accountModify.getPassword().equals("")) {
-                    String encodedPassword = passwordEncoder.encode(accountModify.getPassword());
-                    accountModify.setPassword(encodedPassword);
-                    account.setPassword(accountModify.getPassword());
-                    account.setPasswordUpdDt(LocalDateTime.now());
-                }
-                account.setAuthority(authorityRepository.getOne(accountModify.getAuthority().getAuthorityId()));
-                account.setPhoneNumber(accountModify.getPhoneNumber());
-                account.setEmail(accountModify.getEmail());
-                account.setUpdDt(LocalDateTime.now());
-                account.setUpdId(loginUser.getUsername());
-            }
-            AccountDetail accountDetail = accountMapper.toDto(account);
-            accountDetail.setPassword("");
-
-            accountDetail.convertXss();
-            return accountDetail;
-        } catch (ServiceException se) {
-            log.error("> {}", se.getResponseCodeType().desc());
-            throw new ServiceException(se.getResponseCodeType(), se);
-        } finally {
-            log.info("[RES 계정 수정] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
+        // 패스워드 수정 시 이전 패스워드와 동일하면 안됨
+        if (this.passwordEncoder.matches(accountModify.getPassword(), account.getPassword())) {
+            throw new ServiceException(ResponseCodeType.SERVER_ERROR_41001014);
         }
+
+        if (!this.accountMapper.toDto(account).equals(accountModify)) {
+            if (TextUtils.isNotEmpty(accountModify.getPassword())) {
+                String encodedPassword = this.passwordEncoder.encode(accountModify.getPassword());
+                accountModify.setPassword(encodedPassword);
+                account.setPassword(accountModify.getPassword());
+                account.setPasswordUpdDt(LocalDateTime.now());
+            }
+
+            account.setAuthority(this.authorityRepository.getOne(accountModify.getAuthority().getAuthorityId()));
+            account.setPhoneNumber(accountModify.getPhoneNumber());
+            account.setEmail(accountModify.getEmail());
+            account.setUpdDt(LocalDateTime.now());
+            account.setUpdId(loginUser.getUsername());
+        }
+
+        AccountDetail accountDetail = this.accountMapper.toDto(account);
+        accountDetail.setPassword("");
+        accountDetail.convertXss();
+
+        log.info("[RES 계정 수정] 사용자 ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
+        return accountDetail;
     }
 
     /**
@@ -189,18 +170,15 @@ public class AccountService {
      */
     @Transactional
     public boolean remove(UserDetails userDetails, List<Long> ids) {
-        log.info("[REQ 계정 삭제] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
-        log.debug("> 계정 삭제 ids: {}", ids.toString());
-//        CustomUserDetails loginUser = (CustomUserDetails) userDetails;
-//        log.debug("> 인증(권한) 확인, username: {}, name: {}, roles: {}", loginUser.getUsername(), loginUser.getName(), loginUser.getAuthorities());
+        log.info("[REQ 계정 삭제] 사용자 ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
 
         try {
-            ids.forEach(accountRepository::deleteById);
+            ids.forEach(this.accountRepository::deleteById);
+            log.info("[RES 계정 삭제] 사용자 ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
             return true;
-        } catch (RuntimeException re) {
+        }
+        catch (RuntimeException re) {
             throw new ServiceException(ResponseCodeType.SERVER_ERROR_42001005, re);
-        } finally {
-            log.info("[RES 계정 삭제] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
         }
     }
 
@@ -213,10 +191,10 @@ public class AccountService {
      */
     @Transactional
     public boolean checkDuplicate(UserDetails userDetails, String username) {
-        log.info("[REQ 계정 중복 조회] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
-        log.debug("> 계정 중복 조회 username: {}", username);
-        log.info("[RES 계정 중복 조회] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
-        return accountRepository.findByUsername(username).isPresent();
+        log.info("[REQ 계정 중복 조회] 사용자 ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
+        boolean tf = this.accountRepository.findByUsername(username).isPresent();
+        log.info("[RES 계정 중복 조회] 사용자 ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
+        return tf;
     }
 
     /**
@@ -226,12 +204,15 @@ public class AccountService {
      */
     @Transactional(readOnly = true)
     public List<AccountDetail> findAll() {
-        List<AccountDetail> accountDetailList = this.accountRepository.findAll().stream().map(this.accountMapper::toDto).collect(Collectors.toList());
-        accountDetailList.stream().forEach(accountDto -> {
-            accountDto.setPassword("");
-        });
-        accountDetailList.forEach(accountDto -> accountDto.convertXss());
-        return accountDetailList;
+        return this.accountRepository.findAll().stream()
+                .map(a -> {
+                    AccountDetail accountDetail = this.accountMapper.toDto(a);
+                    accountDetail.setPassword("");
+                    accountDetail.convertXss();
+
+                    return accountDetail;
+                })
+                .collect(Collectors.toList());
     }
 
     /**
@@ -242,15 +223,15 @@ public class AccountService {
     @Transactional
     public boolean blockAccounts(UserDetails userDetails, List<Long> ids) {
         try {
-            log.info("[REQ 계정 차단] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
-            log.debug("> 계정 차단 ids: {}", ids.toString());
+            log.info("[REQ 계정 차단] 사용자 ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
+
             ids.forEach(id -> accountRepository.getOne(id).setStatus(AccountStatusType.BLOCK.code()));
+
+            log.info("[RES 계정 차단] 사용자 ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
             return true;
-        } catch (RuntimeException re) {
-            log.error("> {}", ResponseCodeType.SERVER_ERROR_42001004.desc());
+        }
+        catch (RuntimeException re) {
             throw new ServiceException(ResponseCodeType.SERVER_ERROR_42001004, re);
-        } finally {
-            log.info("[RES 계정 차단] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
         }
     }
 
@@ -262,10 +243,7 @@ public class AccountService {
     @Transactional
     public boolean permitAccounts(UserDetails userDetails, List<Long> ids) {
         try {
-            log.info("[REQ 계정 승인] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
-            log.debug("> 계정 승인 ids: {}", ids.toString());
-
-            // ids.forEach(id -> accountRepository.getOne(id).setStatus(AccountStatusType.APPROVAL.code()));
+            log.info("[REQ 계정 승인] 사용자 ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
 
             ids.forEach(id -> accountRepository.findById(id).ifPresent(a -> {
                 if (AccountStatusType.LOCKED.code().equals(a.getStatus())) {
@@ -285,46 +263,12 @@ public class AccountService {
                 });
             }));
 
-            return true;
-        } catch (RuntimeException re) {
-            log.error("> {}", ResponseCodeType.SERVER_ERROR_42001004.desc());
-            throw new ServiceException(ResponseCodeType.SERVER_ERROR_42001004, re);
-        } finally {
             log.info("[RES 계정 승인] 사용자ID: {}, url: {}", userDetails.getUsername(), this.request.getRequestURL().toString());
+            return true;
         }
-    }
-
-    /**
-     * 비밀번호 조건 체크
-     *
-     * @return
-     */
-    @Transactional(readOnly = true)
-    public boolean checkPasswordPattern(String password) {
-        // 영문자 + 숫자
-        boolean check1 = Pattern.matches("^(?=.*[a-zA-Z])(?=.*[0-9]).{10,20}$", password);
-        // 영문 + 특수문자
-        boolean check2 = Pattern.matches("^(?=.*[a-zA-Z])(?=.*[!$%^]).{10,20}$", password);
-        // 특수문자 + 숫자
-        boolean check3 = Pattern.matches("^(?=.*[!$%^])(?=.*[0-9]).{10,20}$", password);
-        // 영문자 , 숫자 , 특수문자(!$%^) 중 3가지 조합 ( 8~20 )
-        boolean check4 = Pattern.matches("^(?=.*[a-zA-Z])(?=.*[!$%^])(?=.*[0-9]).{8,20}$", password);
-
-        if (!(check1 || check2 || check3 || check4)) {
-            log.info("Password condition mismatch!!");
-            log.info("영문자 + 숫자 {}, 영문 + 특수문자 {}, 특수문자 + 숫자 {}, 영문자 , 숫자 , 특수문자(!$%^) 중 3가지 조합 {}", check1, check2, check3, check4);
-            return false;
+        catch (RuntimeException re) {
+            throw new ServiceException(ResponseCodeType.SERVER_ERROR_42001004, re);
         }
-
-        //	연속적인 숫자
-        boolean check6 = Pattern.matches("/(00)|(11)|(22)|(33)|(44)|(55)|(66)|(77)|(88)|(99)/", password);
-
-        if (check6) {
-            log.info("Password condition mismatch!!");
-            return false;
-        }
-
-        return true;
     }
 
 }

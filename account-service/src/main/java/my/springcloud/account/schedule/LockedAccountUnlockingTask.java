@@ -13,7 +13,7 @@ public class LockedAccountUnlockingTask {
 
     private final AuthService service;
 
-    @Scheduled(cron = "1 * * * * *") // 매분 1초마다 실행
+    // @Scheduled(cron = "1 * * * * *") // 매분 1초마다 실행
     public void runUnlockAccount() {
         this.service.unlockAccount();
     }

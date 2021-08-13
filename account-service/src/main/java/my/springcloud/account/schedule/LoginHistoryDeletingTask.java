@@ -13,7 +13,7 @@ public class LoginHistoryDeletingTask {
 
     private final LoginHistoryService service;
 
-    @Scheduled(cron = "5 * * * * *") // 매분 5초마다 실행
+    // @Scheduled(cron = "5 * * * * *") // 매분 5초마다 실행
     public void runDeleteLoginHistory() {
         this.service.deleteLoginHistory();
     }
