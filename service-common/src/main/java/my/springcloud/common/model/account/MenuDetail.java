@@ -1,22 +1,22 @@
 package my.springcloud.common.model.account;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = {
-		"menuId"
+	"menuId"
 })
 @ToString(exclude = {
-		"menuId"
+	"menuId"
 })
 @Schema(name = "MenuDto", description = "메뉴 DTO")
 public class MenuDetail implements Serializable {

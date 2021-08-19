@@ -11,17 +11,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Configuration
 public class HttpMessageConverter {
 
-    private final ObjectMapper objectMapper;
+	private final ObjectMapper objectMapper;
 
-    @Autowired
-    public HttpMessageConverter(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
+	@Autowired
+	public HttpMessageConverter(ObjectMapper objectMapper) {
+		this.objectMapper = objectMapper;
+	}
 
-    @Primary
-    @Bean
-    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
-        return new MappingJackson2HttpMessageConverter(objectMapper);
-    }
+	@Primary
+	@Bean
+	public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
+		return new MappingJackson2HttpMessageConverter(objectMapper);
+	}
 
 }

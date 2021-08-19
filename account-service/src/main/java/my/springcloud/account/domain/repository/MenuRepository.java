@@ -1,13 +1,14 @@
 package my.springcloud.account.domain.repository;
 
-import my.springcloud.account.domain.entity.Menu;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import java.util.List;
+import my.springcloud.account.domain.entity.Menu;
 
 public interface MenuRepository extends JpaRepository<Menu, Long>, JpaSpecificationExecutor<Menu> {
 
-    List<Menu> findAllByParentMenuIdIsNullOrderBySortOrderAsc();
+	List<Menu> findAllByParentMenuIdIsNullOrderBySortOrderAsc();
 
 }

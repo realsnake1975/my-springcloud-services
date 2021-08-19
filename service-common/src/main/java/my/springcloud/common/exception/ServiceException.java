@@ -1,7 +1,7 @@
 package my.springcloud.common.exception;
 
-import my.springcloud.common.constants.ResponseCodeType;
 import lombok.Getter;
+import my.springcloud.common.constants.ResponseCodeType;
 
 public class ServiceException extends RuntimeException {
 

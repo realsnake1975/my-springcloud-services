@@ -14,9 +14,9 @@ import java.util.TimeZone;
 
 public class DateUtils {
 
-    private DateUtils() {
-        throw new IllegalStateException("Utility class");
-    }
+	private DateUtils() {
+		throw new IllegalStateException("Utility class");
+	}
 
 	/**
 	 * 시작일자로 부터 종료일자 까지의 데이트 일자 맵을 반환한다.
@@ -27,7 +27,7 @@ public class DateUtils {
 	 */
 	public static Map<String, Object> getBetweenDateMap(String startDt, String endDt) {
 		LocalDate startDate = LocalDate.parse(startDt);
-		LocalDate endDate   = LocalDate.parse(endDt);
+		LocalDate endDate = LocalDate.parse(endDt);
 
 		Map<String, Object> map = new LinkedHashMap<>();
 
@@ -48,7 +48,7 @@ public class DateUtils {
 	 */
 	public static long getBetweenDays(String startDt, String endDt) {
 		LocalDate startDate = LocalDate.parse(startDt);
-		LocalDate endDate   = LocalDate.parse(endDt);
+		LocalDate endDate = LocalDate.parse(endDt);
 
 		return ChronoUnit.DAYS.between(startDate, endDate);
 	}
@@ -76,8 +76,7 @@ public class DateUtils {
 
 		try {
 			return convertTimestampToString(dateFormat.parse(timestamp));
-		}
-		catch (ParseException e) {
+		} catch (ParseException e) {
 			return convertTimestampToString(new Date(Long.parseLong(timestamp)));
 		}
 	}
@@ -98,8 +97,7 @@ public class DateUtils {
 
 		if (diff <= 0) {
 			return "방금 전";
-		}
-		else if (diff < 60) {
+		} else if (diff < 60) {
 			return String.format("%d분 전", diff);
 		}
 
@@ -147,8 +145,7 @@ public class DateUtils {
 		try {
 			LocalDate.parse(localDateTime, dateFormatter);
 			return true;
-		}
-		catch (DateTimeParseException e) {
+		} catch (DateTimeParseException e) {
 			return false;
 		}
 	}

@@ -1,33 +1,33 @@
 package my.springcloud.common.model.account;
 
-import my.springcloud.common.utils.TextUtils;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import my.springcloud.common.utils.TextUtils;
+
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = {
-		"authorityId"
-		, "regId"
-		, "regDt"
-		, "updId"
-		, "updDt"
+	"authorityId"
+	, "regId"
+	, "regDt"
+	, "updId"
+	, "updDt"
 })
 @ToString(exclude = {
-		"authorityId"
-		, "menuAuthorityList"
-		, "regId"
-		, "regDt"
-		, "updId"
-		, "updDt"
+	"authorityId"
+	, "menuAuthorityList"
+	, "regId"
+	, "regDt"
+	, "updId"
+	, "updDt"
 })
 @Schema(name = "AuthorityDto", description = "권한 DTO")
 public class AuthorityDetail implements Serializable {

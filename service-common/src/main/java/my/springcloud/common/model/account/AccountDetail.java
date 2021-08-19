@@ -1,33 +1,33 @@
 package my.springcloud.common.model.account;
 
-import my.springcloud.common.utils.TextUtils;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import my.springcloud.common.utils.TextUtils;
+
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = {
-		"accountId"
-		, "username"
-		, "loginHistories"
-		, "accountName"
-		, "companyName"
-		, "status"
-		, "regId"
-		, "regDt"
-		, "updId"
-		, "updDt"
+	"accountId"
+	, "username"
+	, "loginHistories"
+	, "accountName"
+	, "companyName"
+	, "status"
+	, "regId"
+	, "regDt"
+	, "updId"
+	, "updDt"
 })
 @ToString(exclude = {
-		"accountId"
+	"accountId"
 })
 @Schema(name = "AccountDto", description = "계정 DTO")
 public class AccountDetail implements Serializable {

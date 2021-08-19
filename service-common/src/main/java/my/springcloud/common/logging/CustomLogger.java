@@ -9,10 +9,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface CustomLogger {
 
-    SvcType svcType() default SvcType.SVC03;
+	SvcType svcType() default SvcType.SVC03;
 
-    SvcClassType svcClassType() default SvcClassType.F07;
+	SvcClassType svcClassType() default SvcClassType.F07;
 
-    SubSvcClassType subSvcClassType();
+	SubSvcClassType subSvcClassType();
 
 }

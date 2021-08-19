@@ -1,21 +1,21 @@
 package my.springcloud.common.model.account;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = {
-		"historySeq"
+	"historySeq"
 })
 @ToString(exclude = {
-		"historySeq"
+	"historySeq"
 })
 @Schema(name = "LoginHistoryDto", description = "로그인 이력 DTO")
 public class LoginHistoryDetail implements Serializable {

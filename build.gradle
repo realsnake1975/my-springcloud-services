@@ -89,14 +89,14 @@ subprojects {
         testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 
         implementation("org.springframework.boot:spring-boot-starter-web")
-		
+
         // validation
         implementation("org.springframework.boot:spring-boot-starter-validation")
 
         // actuator
         implementation("org.springframework.boot:spring-boot-starter-actuator")
-		
-		// spring cloud 
+
+        // spring cloud
         implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
         implementation("org.springframework.cloud:spring-cloud-starter-config")
         implementation("org.springframework.cloud:spring-cloud-bus")
@@ -141,9 +141,9 @@ project(":service-common") {
     }
 
     dependencies {
-		api("org.springframework.boot:spring-boot-starter-web")
+        api("org.springframework.boot:spring-boot-starter-web")
         api("org.springframework.boot:spring-boot-starter-security")
-		api("org.springframework.boot:spring-boot-starter-data-jpa")
+        api("org.springframework.boot:spring-boot-starter-data-jpa")
 
         // jwt, https://github.com/jwtk/jjwt
         api("io.jsonwebtoken:jjwt-api:${jjwtVersion}")
@@ -169,12 +169,12 @@ project(":service-common") {
         api("org.springframework.cloud:spring-cloud-starter-openfeign")
         api("io.github.openfeign:feign-okhttp")
 
-		// 암복호화
-		api("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3")
+        // 암복호화
+        api("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3")
 
         // User-Agent 파서
         api("com.github.ua-parser:uap-java:1.5.2")
-		
+
         api("org.apache.httpcomponents:httpclient:4.5.13")
         api("commons-io:commons-io:2.11.0")
         api("commons-fileupload:commons-fileupload:1.4")
@@ -214,7 +214,7 @@ project(":account-service") {
     springBoot {
         buildInfo()
     }
-	
+
     dependencies {
         api project(":service-common")
 

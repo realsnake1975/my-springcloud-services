@@ -7,59 +7,56 @@ import java.util.stream.Collectors;
 
 public enum AccountStatusType {
 
-    APPROVAL("approval", "승인", true, true, 1),
-    BLOCK("block", "차단", true, false, 2),
-    LOCKED("lock", "잠김", false, false, 3),
-    ;
+	APPROVAL("approval", "승인", true, true, 1),
+	BLOCK("block", "차단", true, false, 2),
+	LOCKED("lock", "잠김", false, false, 3),
+	;
 
-    AccountStatusType(String code, String desc, boolean openYn, boolean defaultConfigYn, int sortOrder) {
-        this.code = code;
-        this.desc = desc;
-        this.openYn = openYn;
-        this.defaultConfigYn = defaultConfigYn;
-        this.sortOrder = sortOrder;
-    }
+	private final String code;
+	private final String desc;
+	private final boolean openYn;
+	private final boolean defaultConfigYn;
+	private final int sortOrder;
 
-    private final String code;
+	AccountStatusType(String code, String desc, boolean openYn, boolean defaultConfigYn, int sortOrder) {
+		this.code = code;
+		this.desc = desc;
+		this.openYn = openYn;
+		this.defaultConfigYn = defaultConfigYn;
+		this.sortOrder = sortOrder;
+	}
 
-    private final String desc;
+	public static List<AccountStatusType> sortedValues() {
+		return Arrays.stream(values())
+			.filter(e -> e.openYn())
+			.sorted(Comparator.comparingInt(e -> e.sortOrder()))
+			.collect(Collectors.toList());
+	}
 
-    private final boolean openYn;
+	public String code() {
+		return code;
+	}
 
-    private final boolean defaultConfigYn;
+	public String desc() {
+		return desc;
+	}
 
-    private final int sortOrder;
+	public boolean openYn() {
+		return openYn;
+	}
 
-    public String code() {
-        return code;
-    }
+	public boolean defaultConfigYn() {
+		return defaultConfigYn;
+	}
 
-    public String desc() {
-        return desc;
-    }
+	public int sortOrder() {
+		return sortOrder;
+	}
 
-    public boolean openYn() {
-        return openYn;
-    }
-
-    public boolean defaultConfigYn() {
-        return defaultConfigYn;
-    }
-
-    public int sortOrder() {
-        return sortOrder;
-    }
-
-    public static List<AccountStatusType> sortedValues() {
-        return Arrays.stream(values())
-                .filter(e -> e.openYn())
-                .sorted(Comparator.comparingInt(e -> e.sortOrder()))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public String toString() {
-        return String.format("code:%s, desc:%s, openYn:%s, defaultConfigYn:%s, sortOrder:%s", code(), desc(), openYn(), defaultConfigYn(), sortOrder());
-    }
+	@Override
+	public String toString() {
+		return String.format("code:%s, desc:%s, openYn:%s, defaultConfigYn:%s, sortOrder:%s", code(), desc(), openYn(),
+			defaultConfigYn(), sortOrder());
+	}
 
 }

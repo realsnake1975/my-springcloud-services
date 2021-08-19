@@ -1,13 +1,14 @@
 package my.springcloud.account.domain.repository;
 
-import my.springcloud.account.domain.aggregate.Authority;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import java.util.Optional;
+import my.springcloud.account.domain.aggregate.Authority;
 
 public interface AuthorityRepository extends JpaRepository<Authority, Long>, JpaSpecificationExecutor<Authority> {
 
-    Optional<Authority> findTop1ByAuthorityName(String name);
+	Optional<Authority> findTop1ByAuthorityName(String name);
 
 }

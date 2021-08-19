@@ -8,10 +8,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-		basePackages = { "my.springcloud" }
+	basePackages = {"my.springcloud"}
 )
 @EntityScan(
-		basePackages = { "my.springcloud" }
+	basePackages = {"my.springcloud"}
 )
 public class DataSourceConfig {
 

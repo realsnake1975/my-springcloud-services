@@ -9,10 +9,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface BatchAndEventLogger {
 
-    SvcType svcType() default SvcType.SVC03;
+	SvcType svcType() default SvcType.SVC03;
 
-    SvcClassType svcClassType() default SvcClassType.F01;
+	SvcClassType svcClassType() default SvcClassType.F01;
 
-    SubSvcClassType subSvcClassType();
+	SubSvcClassType subSvcClassType();
 
 }

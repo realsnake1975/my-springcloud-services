@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProxyInfo {
 
-    private final String proxyHost;
-    private final Integer proxyPort;
+	private final String proxyHost;
+	private final Integer proxyPort;
 
 }

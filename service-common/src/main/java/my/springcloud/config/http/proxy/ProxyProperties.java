@@ -1,11 +1,12 @@
 package my.springcloud.config.http.proxy;
 
-import lombok.Getter;
-import lombok.Setter;
+import java.util.List;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -13,8 +14,8 @@ import java.util.List;
 @ConfigurationProperties(prefix = "proxy")
 public class ProxyProperties {
 
-    private String host;
-    private Integer port;
-    private List<String> target;
+	private String host;
+	private Integer port;
+	private List<String> target;
 
 }

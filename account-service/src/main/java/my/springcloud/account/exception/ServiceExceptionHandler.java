@@ -2,8 +2,6 @@ package my.springcloud.account.exception;
 
 import javax.servlet.http.HttpServletRequest;
 
-import my.springcloud.common.constants.ResponseCodeType;
-import my.springcloud.common.exception.ServiceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -14,17 +12,18 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import lombok.extern.slf4j.Slf4j;
+import my.springcloud.common.constants.ResponseCodeType;
+import my.springcloud.common.exception.ServiceException;
 import my.springcloud.common.wrapper.CommonModel;
 import my.springcloud.config.exception.ApiExceptionHandler;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice(annotations = RestController.class)
 public class ServiceExceptionHandler extends ApiExceptionHandler {
 
 	@SuppressWarnings("rawtypes")
-	@ExceptionHandler({ ServiceException.class })
+	@ExceptionHandler({ServiceException.class})
 	public ResponseEntity handleServiceException(HttpServletRequest req, ServiceException e) {
 		log.error(req.getRequestURL() + " ServiceException", e);
 
@@ -33,7 +32,7 @@ public class ServiceExceptionHandler extends ApiExceptionHandler {
 	}
 
 	@SuppressWarnings("rawtypes")
-	@ExceptionHandler({ BadCredentialsException.class })
+	@ExceptionHandler({BadCredentialsException.class})
 	public ResponseEntity handleBadCredentialsException(HttpServletRequest req, BadCredentialsException e) {
 		log.error(req.getRequestURL() + " BadCredentialsException: {}", e.getMessage());
 
@@ -42,7 +41,7 @@ public class ServiceExceptionHandler extends ApiExceptionHandler {
 	}
 
 	@SuppressWarnings("rawtypes")
-	@ExceptionHandler({ AdminAuthException.class })
+	@ExceptionHandler({AdminAuthException.class})
 	public ResponseEntity handleAdminAuthException(HttpServletRequest req, AdminAuthException e) {
 		log.error(req.getRequestURL() + " AdminAuthException: {}", e.getMessage());
 
@@ -51,8 +50,9 @@ public class ServiceExceptionHandler extends ApiExceptionHandler {
 	}
 
 	@SuppressWarnings("rawtypes")
-	@ExceptionHandler({ CannotCreateTransactionException.class })
-	public ResponseEntity handleCannotCreateTransactionException(HttpServletRequest req, CannotCreateTransactionException e) {
+	@ExceptionHandler({CannotCreateTransactionException.class})
+	public ResponseEntity handleCannotCreateTransactionException(HttpServletRequest req,
+		CannotCreateTransactionException e) {
 		log.error(req.getRequestURL() + " CannotCreateTransactionException", e);
 
 		CommonModel scm = new CommonModel(ResponseCodeType.SERVER_ERROR_43001001);
@@ -60,7 +60,7 @@ public class ServiceExceptionHandler extends ApiExceptionHandler {
 	}
 
 	@SuppressWarnings("rawtypes")
-	@ExceptionHandler({ MissingRequestHeaderException.class })
+	@ExceptionHandler({MissingRequestHeaderException.class})
 	public ResponseEntity handleMissingRequestHeaderException(HttpServletRequest req, MissingRequestHeaderException e) {
 		log.error(req.getRequestURL() + " MissingRequestHeaderException", e);
 
@@ -70,7 +70,7 @@ public class ServiceExceptionHandler extends ApiExceptionHandler {
 
 	@Override
 	@SuppressWarnings("rawtypes")
-	@ExceptionHandler({ HttpMessageNotReadableException.class })
+	@ExceptionHandler({HttpMessageNotReadableException.class})
 	public ResponseEntity invalidFormatException(HttpServletRequest req, HttpMessageNotReadableException e) {
 		log.error(req.getRequestURL() + " HttpMessageNotReadableException: {}", e.getMessage());
 

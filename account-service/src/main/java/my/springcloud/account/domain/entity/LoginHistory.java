@@ -1,11 +1,17 @@
 package my.springcloud.account.domain.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -43,7 +49,7 @@ public class LoginHistory implements Serializable {
 	// OTP인증시도횟수
 	@Column(name = "otp_auth_try_cnt", columnDefinition = "int default 0")
 	private Integer otpAuthTryCnt;
-	
+
 	// OTP인증실패횟수
 	@Column(name = "otp_auth_fail_cnt", columnDefinition = "int default 0")
 	private Integer otpAuthFailCnt;

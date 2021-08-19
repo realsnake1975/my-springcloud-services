@@ -1,16 +1,18 @@
 package my.springcloud.account.domain.spec;
 
-import my.springcloud.common.model.account.AccountSearch;
-import my.springcloud.common.utils.TextUtils;
-import my.springcloud.account.domain.aggregate.Account;
-import org.springframework.data.jpa.domain.Specification;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.springframework.data.jpa.domain.Specification;
+
+import my.springcloud.account.domain.aggregate.Account;
+import my.springcloud.common.model.account.AccountSearch;
+import my.springcloud.common.utils.TextUtils;
 
 public class AccountSpec extends AccountSearch implements Specification<Account> {
 
@@ -30,8 +32,7 @@ public class AccountSpec extends AccountSearch implements Specification<Account>
 		if (!super.getSearchType().isEmpty()) {
 			if (TextUtils.isNotEmpty(super.getSearchCondition())) {
 				keywordPredicate = cb.like(root.get(super.getSearchCondition()), "%" + super.getSearchKeyword() + "%");
-			}
-			else {
+			} else {
 				Predicate namePredicate = cb.like(root.get("accountName"), "%" + super.getSearchKeyword() + "%");
 				Predicate usernamePredicate = cb.like(root.get("username"), "%" + super.getSearchKeyword() + "%");
 				Predicate companyNamePredicate = cb.like(root.get("companyName"), "%" + super.getSearchKeyword() + "%");
@@ -41,8 +42,7 @@ public class AccountSpec extends AccountSearch implements Specification<Account>
 			authorityPredicate = root.get("authority").get("authorityName").in(super.getSearchType());
 
 			predicates.add(cb.and(keywordPredicate, authorityPredicate));
-		}
-		else {
+		} else {
 			//검색결과 없음
 			predicates.add(cb.equal(root.get("accountId"), "0"));
 		}
