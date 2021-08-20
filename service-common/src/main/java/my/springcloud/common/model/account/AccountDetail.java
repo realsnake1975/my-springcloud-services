@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
@@ -15,16 +16,16 @@ import my.springcloud.common.utils.TextUtils;
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = {
-	"accountId"
-	, "username"
-	, "loginHistories"
-	, "accountName"
-	, "companyName"
-	, "status"
-	, "regId"
-	, "regDt"
-	, "updId"
-	, "updDt"
+	"accountId",
+	"username",
+	"loginHistories",
+	"accountName",
+	"companyName",
+	"status",
+	"regId",
+	"regDt",
+	"updId",
+	"updDt"
 })
 @ToString(exclude = {
 	"accountId"
@@ -83,19 +84,19 @@ public class AccountDetail implements Serializable {
 	private LocalDateTime accountLockedDt;
 
 	public void convertXss() {
-		if (username != null) {
+		if (Objects.nonNull(username)) {
 			username = TextUtils.convertXss(username);
 		}
-		if (authority != null) {
+		if (Objects.nonNull(authority)) {
 			authority.convertXss();
 		}
-		if (accountName != null) {
+		if (Objects.nonNull(accountName)) {
 			accountName = TextUtils.convertXss(accountName);
 		}
-		if (phoneNumber != null) {
+		if (Objects.nonNull(phoneNumber)) {
 			phoneNumber = TextUtils.convertXss(phoneNumber);
 		}
-		if (email != null) {
+		if (Objects.nonNull(email)) {
 			email = TextUtils.convertXss(email);
 		}
 	}

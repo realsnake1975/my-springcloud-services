@@ -6,10 +6,9 @@ public enum DtfType {
 
 	yyyyMMdd(DateTimeFormatter.ofPattern("yyyyMMdd")),
 	yyyyMMddHHmm(DateTimeFormatter.ofPattern("yyyyMMddHHmm")),
-	yyyyMMddHHmmss(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")),
-	;
+	yyyyMMddHHmmss(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 
-	private final DateTimeFormatter dtf;
+	private final transient DateTimeFormatter dtf;
 
 	DtfType(DateTimeFormatter dtf) {
 		this.dtf = dtf;

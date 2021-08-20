@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -80,11 +81,9 @@ public class CustomUserDetailsHelper {
 		SimpleDateFormat sdf = new SimpleDateFormat(CommonConstants.DEFAULT_DATE_FORMAT, Locale.KOREA);
 		log.debug("> token expired date: {}", sdf.format(expDate));
 
-		List<String> roles = customUser.getAuthorities()
-			.stream()
+		List<String> roles = customUser.getAuthorities().stream()
 			.map(GrantedAuthority::getAuthority)
 			.collect(Collectors.toList());
-		Long accountId = (customUser.getAccountId() == null) ? 0L : customUser.getAccountId();
 
 		return Jwts.builder()
 			.signWith(this.getSecretKey(), SignatureAlgorithm.HS512)
@@ -97,7 +96,7 @@ public class CustomUserDetailsHelper {
 			.setIssuedAt(new Date())
 			.claim("rol", roles)
 			.claim("name", customUser.getName())
-			.claim("accountId", accountId)
+			.claim("accountId", Optional.ofNullable(customUser.getAccountId()).orElse(0L))
 			.claim("refreshTokenYn", refreshTokenYn)
 			.compact();
 	}

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
@@ -15,19 +16,19 @@ import my.springcloud.common.utils.TextUtils;
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = {
-	"authorityId"
-	, "regId"
-	, "regDt"
-	, "updId"
-	, "updDt"
+	"authorityId",
+	"regId",
+	"regDt",
+	"updId",
+	"updDt"
 })
 @ToString(exclude = {
-	"authorityId"
-	, "menuAuthorityList"
-	, "regId"
-	, "regDt"
-	, "updId"
-	, "updDt"
+	"authorityId",
+	"menuAuthorities",
+	"regId",
+	"regDt",
+	"updId",
+	"updDt"
 })
 @Schema(name = "AuthorityDto", description = "권한 DTO")
 public class AuthorityDetail implements Serializable {
@@ -37,8 +38,8 @@ public class AuthorityDetail implements Serializable {
 	@Schema(name = "authorityId", description = "계정아이디")
 	private long authorityId;
 
-	@Schema(name = "menuAuthorityList", description = "메뉴권한")
-	private List<MenuAuthorityDetail> menuAuthorityList = new ArrayList<>();
+	@Schema(name = "menuAuthorities", description = "메뉴권한")
+	private List<MenuAuthorityDetail> menuAuthorities = new ArrayList<>();
 
 	@Schema(name = "authorityName", description = "권한명")
 	private String authorityName;
@@ -62,10 +63,10 @@ public class AuthorityDetail implements Serializable {
 	private LocalDateTime updDt;
 
 	public void convertXss() {
-		if (authorityName != null) {
+		if (Objects.nonNull(authorityName)) {
 			authorityName = TextUtils.convertXss(authorityName);
 		}
-		if (description != null) {
+		if (Objects.nonNull(description)) {
 			description = TextUtils.convertXss(description);
 		}
 	}
