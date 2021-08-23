@@ -11,12 +11,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.data.domain.AbstractAggregateRoot;
 
 import lombok.Getter;
 import lombok.Setter;
 import my.springcloud.account.domain.entity.Authority;
+import my.springcloud.common.event.CustomEvent;
 
 @Getter
 @Setter
@@ -87,5 +89,9 @@ public class Account extends AbstractAggregateRoot<Account> implements Serializa
 	// 계정 잠금일시
 	@Column(name = "account_locked_dt")
 	private LocalDateTime accountLockedDt;
+
+	public void registerEvent(@NotNull CustomEvent<Account> event) {
+		super.registerEvent(event);
+	}
 
 }
