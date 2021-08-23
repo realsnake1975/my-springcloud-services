@@ -14,8 +14,6 @@ public interface LoginHistoryRepository extends JpaRepository<LoginHistory, Long
 
 	Optional<LoginHistory> findTop1ByAuthTokenOrderByHistorySeqDesc(String authToken);
 
-	List<LoginHistory> findByAccountId(Long accountId);
-
 	List<LoginHistory> findByAccountIdAndOtpNotNull(Long accountId);
 
 	List<LoginHistory> findByLoginReqDtBefore(LocalDateTime beforeDt);
