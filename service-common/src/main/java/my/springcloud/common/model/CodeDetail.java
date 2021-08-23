@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Schema(name = "CodeDto", description = "공통코드 응답 DTO")
+@Schema(name = "CodeDetail", description = "공통코드 응답 DTO")
 public class CodeDetail {
 
 	@Schema(name = "code", description = "코드")

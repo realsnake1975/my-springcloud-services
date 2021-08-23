@@ -30,7 +30,7 @@ import my.springcloud.common.utils.TextUtils;
 	"updId",
 	"updDt"
 })
-@Schema(name = "AuthorityDto", description = "권한 DTO")
+@Schema(name = "AuthorityDetail", description = "권한 상세 DTO")
 public class AuthorityDetail implements Serializable {
 
 	private static final long serialVersionUID = -6605465516954409942L;

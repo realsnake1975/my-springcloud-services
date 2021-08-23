@@ -30,7 +30,7 @@ import my.springcloud.common.utils.TextUtils;
 @ToString(exclude = {
 	"accountId"
 })
-@Schema(name = "AccountDto", description = "계정 DTO")
+@Schema(name = "AccountDetail", description = "계정 상세 DTO")
 public class AccountDetail implements Serializable {
 
 	private static final long serialVersionUID = -6605465516954409942L;

@@ -69,8 +69,7 @@ public class AuthorityController {
 	)
 	@CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H37)
 	@PostMapping(value = "")
-	public <U extends UserDetails> ResponseEntity create(@AuthenticationPrincipal U principal,
-		@RequestBody AuthorityHandle authorityCreateDto) {
+	public <U extends UserDetails> ResponseEntity create(@AuthenticationPrincipal U principal, @RequestBody AuthorityHandle authorityCreateDto) {
 		return ResponseEntity.ok(this.authorityService.create(principal, authorityCreateDto));
 	}
 
@@ -99,10 +98,10 @@ public class AuthorityController {
 			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
 		},
 		parameters = {
-			@Parameter(name = "page", in = ParameterIn.QUERY, required = false, description = "페이지 번호", example = ""),
-			@Parameter(name = "size", in = ParameterIn.QUERY, required = false, description = "페이지 목록 사이즈", example = ""),
+			@Parameter(name = "page", in = ParameterIn.QUERY, description = "페이지 번호", example = ""),
+			@Parameter(name = "size", in = ParameterIn.QUERY, description = "페이지 목록 사이즈", example = ""),
 			// sort순서 일단 id기준
-			@Parameter(name = "sort", in = ParameterIn.QUERY, required = false, description = "정렬 조건(sort=authorityId,asc)", example = "")
+			@Parameter(name = "sort", in = ParameterIn.QUERY, description = "정렬 조건(sort=authorityId,asc)", example = "")
 		},
 		responses = {
 			@ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDetail.class)))

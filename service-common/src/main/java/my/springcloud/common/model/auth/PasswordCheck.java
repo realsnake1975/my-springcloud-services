@@ -11,6 +11,6 @@ import lombok.Setter;
 @JsonIgnoreProperties(value = {
 	"newPassword"
 })
-@Schema(name = "PasswordCheckDto", description = "비밀번호 확인 DTO")
+@Schema(name = "PasswordCheck", description = "비밀번호 확인 DTO")
 public class PasswordCheck extends PasswordUpdate {
 }

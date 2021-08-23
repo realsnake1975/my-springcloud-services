@@ -1,4 +1,4 @@
-package my.springcloud.account.domain.aggregate;
+package my.springcloud.account.domain.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -16,18 +16,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.BatchSize;
-import org.springframework.data.domain.AbstractAggregateRoot;
 
 import lombok.Getter;
 import lombok.Setter;
-import my.springcloud.account.domain.entity.MenuAuthority;
 
 @Getter
 @Setter
 @BatchSize(size = 20)
 @Entity
 @Table(name = "TB_AUTHORITY")
-public class Authority extends AbstractAggregateRoot<Authority> implements Serializable {
+public class Authority implements Serializable {
 
 	private static final long serialVersionUID = 2389323026496370460L;
 

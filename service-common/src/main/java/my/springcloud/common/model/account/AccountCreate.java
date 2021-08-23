@@ -12,25 +12,25 @@ import my.springcloud.common.constants.AccountStatusType;
 @Getter
 @Setter
 @JsonIgnoreProperties(value = {
-	"accountId"
-	, "loginHistoryList"
-	, "regId"
-	, "regDt"
-	, "modId"
-	, "modDt"
-	, "status"
+	"accountId",
+	"loginHistories",
+	"regId",
+	"regDt",
+	"modId",
+	"modDt",
+	"status"
 })
-@Schema(name = "AccountCreateDto", description = "권한 DTO 등록")
+@Schema(name = "AccountCreate", description = "계정 등록 DTO")
 public class AccountCreate extends AccountDetail {
 
 	private static final long serialVersionUID = -5154790211167492937L;
 
 	public AccountCreate() {
 		LocalDateTime now = LocalDateTime.now();
-		setRegDt(now);
-		setUpdDt(now);
-		setPasswordUpdDt(now);
-		setStatus(AccountStatusType.APPROVAL.code());
+		super.setRegDt(now);
+		super.setUpdDt(now);
+		super.setPasswordUpdDt(now);
+		super.setStatus(AccountStatusType.APPROVAL.code());
 	}
 
 }

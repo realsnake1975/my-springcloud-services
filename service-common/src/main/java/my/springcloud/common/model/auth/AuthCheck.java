@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Schema(name = "AuthCheckDto", description = "인증왁인 DTO")
+@Schema(name = "AuthCheck", description = "인증왁인 DTO")
 public class AuthCheck implements Serializable {
 
 	@Schema(name = "authToken", description = "인증토큰")

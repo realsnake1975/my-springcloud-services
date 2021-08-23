@@ -12,7 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import my.springcloud.account.domain.aggregate.Authority;
+import my.springcloud.account.domain.entity.Authority;
 
 @Getter
 @RequiredArgsConstructor

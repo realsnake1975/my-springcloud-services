@@ -75,8 +75,7 @@ public class AccountController {
 	)
 	@CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H32)
 	@PostMapping(value = "")
-	public <U extends UserDetails> ResponseEntity create(@AuthenticationPrincipal U principal,
-		@RequestBody AccountCreate accountCreate) {
+	public <U extends UserDetails> ResponseEntity create(@AuthenticationPrincipal U principal, @RequestBody AccountCreate accountCreate) {
 		return ResponseEntity.ok(this.accountService.create(principal, accountCreate));
 	}
 
@@ -93,8 +92,8 @@ public class AccountController {
 	)
 	@CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H35)
 	@GetMapping(value = "/{id}")
-	public ResponseEntity find(@AuthenticationPrincipal UserDetails principal, @PathVariable long id) {
-		return ResponseEntity.ok(this.accountService.find(principal, id));
+	public ResponseEntity find(@PathVariable long id) {
+		return ResponseEntity.ok(this.accountService.find(id));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -112,7 +111,7 @@ public class AccountController {
 			@Parameter(name = "searchType", in = ParameterIn.QUERY, required = false, description = "유형", example = "", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
 			@Parameter(name = "page", in = ParameterIn.QUERY, required = false, description = "페이지 번호", example = ""),
 			@Parameter(name = "size", in = ParameterIn.QUERY, required = false, description = "페이지 목록 사이즈", example = ""),
-			@Parameter(name = "sort", in = ParameterIn.QUERY, required = false, description = "정렬 조건(sort=regDt,asc,username,asc,accountName,asc)", example = "")
+			@Parameter(name = "sort", in = ParameterIn.QUERY, required = false, description = "정렬 조건(sort=regDt,asc, username,asc, accountName,asc)", example = "")
 		},
 		responses = {
 			@ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDetail.class)))
@@ -120,11 +119,9 @@ public class AccountController {
 	)
 	@CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H36)
 	@GetMapping(value = "")
-	public ResponseEntity find(@AuthenticationPrincipal UserDetails principal, AccountSpec spec,
-		@PageableDefault(page = 0, size = 10) @SortDefault.SortDefaults({
-			@SortDefault(sort = "regDt", direction = Sort.Direction.ASC),
-		}) Pageable pageable) {
-		return ResponseEntity.ok(this.accountService.find(principal, spec, pageable));
+	public ResponseEntity find(AccountSpec spec,
+		@PageableDefault(page = 0, size = 10) @SortDefault.SortDefaults({@SortDefault(sort = "regDt", direction = Sort.Direction.ASC)}) Pageable pageable) {
+		return ResponseEntity.ok(this.accountService.find(spec, pageable));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -149,9 +146,8 @@ public class AccountController {
 	)
 	@CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H33)
 	@PutMapping(value = "/{id}")
-	public <U extends UserDetails> ResponseEntity modify(@AuthenticationPrincipal U principal, @PathVariable long id,
-		@RequestBody AccountModify accountModify) {
-		return ResponseEntity.ok(accountService.modify(principal, id, accountModify));
+	public <U extends UserDetails> ResponseEntity modify(@AuthenticationPrincipal U principal, @PathVariable long id, @RequestBody AccountModify accountModify) {
+		return ResponseEntity.ok(this.accountService.modify(principal, id, accountModify));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -167,9 +163,8 @@ public class AccountController {
 	)
 	@CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H34)
 	@DeleteMapping(value = "")
-	public <U extends UserDetails> ResponseEntity remove(@AuthenticationPrincipal U principal,
-		@RequestParam List<Long> ids) {
-		return ResponseEntity.ok(this.accountService.remove(principal, ids));
+	public ResponseEntity remove(@RequestParam List<Long> ids) {
+		return ResponseEntity.ok(this.accountService.remove(ids));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -185,9 +180,8 @@ public class AccountController {
 	)
 	@CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H43)
 	@GetMapping(value = "/check/{username}")
-	public <U extends UserDetails> ResponseEntity checkDuplicate(@AuthenticationPrincipal U principal,
-		@PathVariable String username) {
-		return ResponseEntity.ok(this.accountService.checkDuplicate(principal, username));
+	public ResponseEntity checkDuplicate(@PathVariable String username) {
+		return ResponseEntity.ok(this.accountService.checkDuplicate(username));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -203,8 +197,7 @@ public class AccountController {
 	)
 	@CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H49)
 	@PutMapping("/block")
-	public <U extends UserDetails> ResponseEntity blockAccounts(@AuthenticationPrincipal U principal,
-		@RequestParam List<Long> ids) {
+	public <U extends UserDetails> ResponseEntity blockAccounts(@AuthenticationPrincipal U principal, @RequestParam List<Long> ids) {
 		return ResponseEntity.ok(this.accountService.blockAccounts(principal, ids));
 	}
 
@@ -221,8 +214,8 @@ public class AccountController {
 	)
 	@CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H50)
 	@PutMapping("/permit")
-	public <U extends UserDetails> ResponseEntity permitAccounts(@AuthenticationPrincipal U principal,
-		@RequestParam List<Long> ids) {
+	public <U extends UserDetails> ResponseEntity permitAccounts(@AuthenticationPrincipal U principal, @RequestParam List<Long> ids) {
 		return ResponseEntity.ok(this.accountService.permitAccounts(principal, ids));
 	}
+
 }

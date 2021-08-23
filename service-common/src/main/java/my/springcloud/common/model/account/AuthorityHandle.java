@@ -23,7 +23,7 @@ import lombok.Setter;
 	"modId",
 	"modDt"
 })
-@Schema(name = "AuthorityHandleDto", description = "권한 DTO 등록, 수정")
+@Schema(name = "AuthorityHandle", description = "권한 등록/수정 DTO")
 public class AuthorityHandle extends AuthorityDetail {
 
 	private static final long serialVersionUID = -5154790211167492937L;
@@ -33,8 +33,8 @@ public class AuthorityHandle extends AuthorityDetail {
 
 	public AuthorityHandle() {
 		LocalDateTime now = LocalDateTime.now();
-		setRegDt(now);
-		setUpdDt(now);
+		super.setRegDt(now);
+		super.setUpdDt(now);
 	}
 
 }

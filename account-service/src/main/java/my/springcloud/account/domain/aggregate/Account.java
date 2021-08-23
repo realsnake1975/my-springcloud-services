@@ -16,6 +16,7 @@ import org.springframework.data.domain.AbstractAggregateRoot;
 
 import lombok.Getter;
 import lombok.Setter;
+import my.springcloud.account.domain.entity.Authority;
 
 @Getter
 @Setter

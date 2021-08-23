@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Schema(name = "PasswordUpdateDto", description = "비밀번호 변경 DTO")
+@Schema(name = "PasswordUpdate", description = "비밀번호 변경 DTO")
 public class PasswordUpdate implements Serializable {
 
 	@Schema(name = "nowPassword", description = "현재 비밀번호")

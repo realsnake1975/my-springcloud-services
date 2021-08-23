@@ -18,7 +18,7 @@ import lombok.ToString;
 @ToString(exclude = {
 	"menuId"
 })
-@Schema(name = "MenuDto", description = "메뉴 DTO")
+@Schema(name = "MenuDetail", description = "메뉴 DTO")
 public class MenuDetail implements Serializable {
 
 	private static final long serialVersionUID = -6605465516954409942L;

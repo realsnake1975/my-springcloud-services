@@ -17,7 +17,7 @@ import lombok.ToString;
 @ToString(exclude = {
 	"historySeq"
 })
-@Schema(name = "LoginHistoryDto", description = "로그인 이력 DTO")
+@Schema(name = "LoginHistoryDetail", description = "로그인 이력 DTO")
 public class LoginHistoryDetail implements Serializable {
 
 	private static final long serialVersionUID = -6605465516954409942L;

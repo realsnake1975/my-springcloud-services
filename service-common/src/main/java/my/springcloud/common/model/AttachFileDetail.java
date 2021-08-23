@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Schema(name = "AttachFileDetail", description = "첨부파일 DTO")
 public class AttachFileDetail implements Serializable {
 
 	private static final long serialVersionUID = -3450318880193835651L;

@@ -9,18 +9,18 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonIgnoreProperties(value = {
-	"accountId"
-	, "username"
-	, "loginHistoryList"
-	, "accountName"
-	, "companyName"
-	, "regId"
-	, "regDt"
-	, "modId"
-	, "modDt"
-	, "status"
+	"accountId",
+	"username",
+	"loginHistories",
+	"accountName",
+	"companyName",
+	"regId",
+	"regDt",
+	"modId",
+	"modDt",
+	"status"
 })
-@Schema(name = "AccountCreateDto", description = "권한 DTO 등록")
+@Schema(name = "AccountModify", description = "계정 수정 DTO")
 public class AccountModify extends AccountDetail {
 
 	private static final long serialVersionUID = -5154790211167492937L;

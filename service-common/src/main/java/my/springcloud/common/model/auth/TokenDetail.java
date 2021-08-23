@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-@Schema(name = "TokenDto", description = "토큰 DTO")
+@Schema(name = "TokenDetail", description = "토큰 DTO")
 public class TokenDetail implements Serializable {
 
 	@Schema(name = "accessToken", description = "액세스 토큰")

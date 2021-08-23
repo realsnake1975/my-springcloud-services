@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import my.springcloud.account.domain.aggregate.Account;
-import my.springcloud.account.domain.aggregate.Authority;
+import my.springcloud.account.domain.entity.Authority;
 import my.springcloud.account.domain.entity.Menu;
 import my.springcloud.account.domain.entity.MenuAuthority;
 import my.springcloud.account.domain.repository.AccountRepository;
