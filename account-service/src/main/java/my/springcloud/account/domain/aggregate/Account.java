@@ -90,6 +90,7 @@ public class Account extends AbstractAggregateRoot<Account> implements Serializa
 	@Column(name = "account_locked_dt")
 	private LocalDateTime accountLockedDt;
 
+	// https://daddyprogrammer.org/post/14797/springboot-domainevent/, https://namjug-kim.github.io/2020/03/24/spring-ddd-domain-event.html
 	public void registerEvent(@NotNull CustomEvent<Account> event) {
 		super.registerEvent(event);
 	}
