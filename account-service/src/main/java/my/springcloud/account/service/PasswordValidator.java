@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import lombok.extern.slf4j.Slf4j;
-import my.springcloud.account.exception.AdminAuthException;
+import my.springcloud.account.exception.AuthException;
 import my.springcloud.common.constants.ResponseCodeType;
 
 @Slf4j
@@ -17,7 +17,7 @@ public class PasswordValidator {
 	public static void validatePassword(String password) {
 		if (password == null || "".equals(password)) { // 공백 체크
 			log.error("> Detected({}): No Password", password);
-			throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001014);
+			throw new AuthException(ResponseCodeType.SERVER_ERROR_41001014);
 		}
 
 		checkPasswordRule(password);
@@ -28,7 +28,7 @@ public class PasswordValidator {
 		Matcher sameCheckMatcher = Pattern.compile(samePattern).matcher(password);
 		if (sameCheckMatcher.find()) {
 			log.error("Detected({}): 3개 이상 동일한 문자 또는 숫자", password);
-			throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001014);
+			throw new AuthException(ResponseCodeType.SERVER_ERROR_41001014);
 		}
 
 		checkContinuousPassword(password);
@@ -68,7 +68,7 @@ public class PasswordValidator {
 		}
 
 		log.debug("> Detected({}): 패스워드 조합 정책 불일치", password);
-		throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001014);
+		throw new AuthException(ResponseCodeType.SERVER_ERROR_41001014);
 	}
 
 	private static boolean checkContinuousPassword(String password) {
@@ -82,7 +82,7 @@ public class PasswordValidator {
 			char tempVal = password.charAt(i);
 			if (i > 0 && (p = o - tempVal) > -2 && (n = p == d ? n + 1 : 0) > limit - 3) {
 				log.error("Detected({}): 3자리 이상 연속된 숫자 또는 문자", password);
-				throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001014);
+				throw new AuthException(ResponseCodeType.SERVER_ERROR_41001014);
 			}
 			d = p;
 			o = tempVal;

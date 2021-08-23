@@ -41,8 +41,8 @@ public class ServiceExceptionHandler extends ApiExceptionHandler {
 	}
 
 	@SuppressWarnings("rawtypes")
-	@ExceptionHandler({AdminAuthException.class})
-	public ResponseEntity handleAdminAuthException(HttpServletRequest req, AdminAuthException e) {
+	@ExceptionHandler({AuthException.class})
+	public ResponseEntity handleAdminAuthException(HttpServletRequest req, AuthException e) {
 		log.error(req.getRequestURL() + " AdminAuthException: {}", e.getMessage());
 
 		CommonModel cm = new CommonModel(e.getResponseCodeType());

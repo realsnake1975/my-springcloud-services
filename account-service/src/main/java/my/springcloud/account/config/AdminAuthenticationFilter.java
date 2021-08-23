@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import my.springcloud.account.exception.AdminAuthException;
+import my.springcloud.account.exception.AuthException;
 import my.springcloud.common.constants.ResponseCodeType;
 import my.springcloud.common.model.auth.AuthCheck;
 import my.springcloud.common.model.auth.TokenDetail;
@@ -98,8 +98,8 @@ public class AdminAuthenticationFilter extends UsernamePasswordAuthenticationFil
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
 		CommonModel cm;
-		if (failed instanceof AdminAuthException) {
-			ResponseCodeType responseCodeType = ((AdminAuthException)failed).getResponseCodeType();
+		if (failed instanceof AuthException) {
+			ResponseCodeType responseCodeType = ((AuthException)failed).getResponseCodeType();
 			cm = new CommonModel<>(responseCodeType);
 		} else {
 			cm = new CommonModel<>(ResponseCodeType.SERVER_ERROR_41001001);

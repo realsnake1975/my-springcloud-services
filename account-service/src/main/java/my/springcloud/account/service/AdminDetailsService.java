@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import my.springcloud.account.domain.aggregate.Account;
-import my.springcloud.account.exception.AdminAuthException;
+import my.springcloud.account.exception.AuthException;
 import my.springcloud.common.model.auth.AuthCheck;
 import my.springcloud.common.sec.model.CustomUserDetails;
 
@@ -34,7 +34,7 @@ public class AdminDetailsService implements UserDetailsService {
 		);
 	}
 
-	@Transactional(noRollbackFor = {AdminAuthException.class})
+	@Transactional(noRollbackFor = {AuthException.class})
 	public UserDetails checkLoginHistoryAndFindUser(AuthCheck authCheck) {
 		Account account = this.authService.checkLoginHistory(authCheck.getAuthToken(), authCheck.getOtp());
 		String loginInfo =

@@ -25,7 +25,7 @@ import my.springcloud.account.domain.aggregate.Account;
 import my.springcloud.account.domain.entity.LoginHistory;
 import my.springcloud.account.domain.repository.AccountRepository;
 import my.springcloud.account.domain.repository.LoginHistoryRepository;
-import my.springcloud.account.exception.AdminAuthException;
+import my.springcloud.account.exception.AuthException;
 import my.springcloud.common.api.AuthApiClient;
 import my.springcloud.common.api.LogoutApiClient;
 import my.springcloud.common.constants.AccountStatusType;
@@ -59,13 +59,13 @@ public class AuthService {
 
 	private void checkAccountStatus(String status) {
 		if (AccountStatusType.BLOCK.code().equalsIgnoreCase(status)) { // 차단된 계정
-			throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001006);
+			throw new AuthException(ResponseCodeType.SERVER_ERROR_41001006);
 		} else if (AccountStatusType.LOCKED.code().equalsIgnoreCase(status)) { // 잠긴 계정
-			throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001009);
+			throw new AuthException(ResponseCodeType.SERVER_ERROR_41001009);
 		}
 	}
 
-	@Transactional(noRollbackFor = {AdminAuthException.class})
+	@Transactional(noRollbackFor = {AuthException.class})
 	public String login(LoginCheck dto) {
 		Account account = this.accountRepository.findByUsername(dto.getUsername())
 			.orElseThrow(ResourceNotFoundException::new);
@@ -102,16 +102,16 @@ public class AuthService {
 				account.setUpdId(dto.getUsername());
 				account.setUpdDt(LocalDateTime.now());
 
-				throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001011); // 로그인 실패 횟수 초과
+				throw new AuthException(ResponseCodeType.SERVER_ERROR_41001011); // 로그인 실패 횟수 초과
 			}
 
-			throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001001); // 인증 실패
+			throw new AuthException(ResponseCodeType.SERVER_ERROR_41001001); // 인증 실패
 		}
 
 		return authToken;
 	}
 
-	@Transactional(noRollbackFor = {AdminAuthException.class})
+	@Transactional(noRollbackFor = {AuthException.class})
 	public boolean requestSmsOtp(String authToken) {
 		LoginHistory loginHistory = this.loginHistoryRepository.findTop1ByAuthTokenOrderByHistorySeqDesc(authToken)
 			.orElseThrow(ResourceNotFoundException::new);
@@ -138,7 +138,7 @@ public class AuthService {
 			account.setUpdDt(nowDatetime);
 			account.setAccountLockedDt(nowDatetime);
 
-			throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001010);
+			throw new AuthException(ResponseCodeType.SERVER_ERROR_41001010);
 		}
 
 		String otp = RandomStringUtils.randomNumeric(6);
@@ -189,12 +189,12 @@ public class AuthService {
 		return new TokenDetail(newAccessToken, newRefreshToken);
 	}
 
-	@Transactional(noRollbackFor = {AdminAuthException.class})
+	@Transactional(noRollbackFor = {AuthException.class})
 	public Account checkLoginHistory(String authToken, String otp) {
 		LoginHistory loginHistory = this.loginHistoryRepository.findTop1ByAuthTokenOrderByHistorySeqDesc(authToken)
-			.orElseThrow(() -> new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001001));
+			.orElseThrow(() -> new AuthException(ResponseCodeType.SERVER_ERROR_41001001));
 		Account account = this.accountRepository.findById(loginHistory.getAccountId())
-			.orElseThrow(() -> new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001002));
+			.orElseThrow(() -> new AuthException(ResponseCodeType.SERVER_ERROR_41001002));
 
 		this.checkAccountStatus(account.getStatus());
 
@@ -205,7 +205,7 @@ public class AuthService {
 
 			this.checkIfAccountLocked(otpAuthFailCnt, account);
 
-			throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001007);
+			throw new AuthException(ResponseCodeType.SERVER_ERROR_41001007);
 		}
 
 		if (Objects.isNull(loginHistory.getOtp()) || !loginHistory.getOtp().equals(otp)) { // OTP 불일치
@@ -213,7 +213,7 @@ public class AuthService {
 
 			this.checkIfAccountLocked(otpAuthFailCnt, account);
 
-			throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001008);
+			throw new AuthException(ResponseCodeType.SERVER_ERROR_41001008);
 		}
 
 		return account;
@@ -249,15 +249,15 @@ public class AuthService {
 			.orElseThrow(ResourceNotFoundException::new);
 
 		if (this.passwordEncoder.matches(dto.getNewPassword(), account.getPassword())) { // 이전 비밀번호와 동일 비번 사용불가
-			throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001012);
+			throw new AuthException(ResponseCodeType.SERVER_ERROR_41001012);
 		}
 
 		if (dto.getNewPassword().contains(account.getUsername())) { // ID를 포함한 비번 사용불가
-			throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001013);
+			throw new AuthException(ResponseCodeType.SERVER_ERROR_41001013);
 		}
 
 		if (!this.passwordEncoder.matches(dto.getNowPassword(), account.getPassword())) { // 현재 비번 불일치
-			throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001001);
+			throw new AuthException(ResponseCodeType.SERVER_ERROR_41001001);
 		}
 
 		PasswordValidator.validatePassword(dto.getNewPassword());
@@ -278,7 +278,7 @@ public class AuthService {
 			log.debug("> reconfirmToken: {}", reconfirmToken);
 			return reconfirmToken;
 		} else {
-			throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001001);
+			throw new AuthException(ResponseCodeType.SERVER_ERROR_41001001);
 		}
 	}
 
@@ -291,13 +291,13 @@ public class AuthService {
 				return true;
 			}
 
-			throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001002);
+			throw new AuthException(ResponseCodeType.SERVER_ERROR_41001002);
 		} catch (IllegalArgumentException e) {
 			log.error("ReconfirmToken Error", e);
-			throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001002);
+			throw new AuthException(ResponseCodeType.SERVER_ERROR_41001002);
 		} catch (Exception e) {
 			log.error("> Invalid tempToken! token: {}, accountId: {}", tempToken, admin.getAccountId(), e);
-			throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001002);
+			throw new AuthException(ResponseCodeType.SERVER_ERROR_41001002);
 		}
 	}
 

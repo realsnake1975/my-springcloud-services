@@ -47,4 +47,5 @@ public class MenuController {
 	public ResponseEntity findMenu() {
 		return ResponseEntity.ok(this.menuService.findMenu());
 	}
+
 }

@@ -49,17 +49,15 @@ public class AuthorityController {
 	@SuppressWarnings("rawtypes")
 	@Operation(
 		summary = "권한 등록(완료)",
-		description = "권한을 등록한다<br />" +
-			"{<br />" +
-			"\"authorityName\": \"name1\",<br />" +
-			"\"description\": \"설명2\", <br />" +
-			"\"readYn\": [\"false\", \"true\", \"true\", \"true\", \"false\", \"true\", \"true\", \"true\"],<br />" +
-			"\"controlYn\": [\"false\", \"false\", \"true\", \"true\", \"false\", \"true\", \"true\", \"true\"],<br />"
-			+
-			"\"useYn\": \"true\"<br />" +
-			"}<br />" +
-			"각각 메뉴에 대해서 true/false 를 위에서부터 순서대로 배열로 묶은값이 input입니다."
-		,
+		description = "권한을 등록한다<br />"
+			+ "{<br />"
+			+ "\"authorityName\": \"name1\",<br />"
+			+ "\"description\": \"설명2\", <br />"
+			+ "\"readYn\": [\"false\", \"true\", \"true\", \"true\", \"false\", \"true\", \"true\", \"true\"],<br />"
+			+ "\"controlYn\": [\"false\", \"false\", \"true\", \"true\", \"false\", \"true\", \"true\", \"true\"],<br />"
+			+ "\"useYn\": \"true\"<br />"
+			+ "}<br />"
+			+ "각각 메뉴에 대해서 true/false 를 위에서부터 순서대로 배열로 묶은 값이 input입니다.",
 		security = {
 			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
 		},
@@ -119,15 +117,14 @@ public class AuthorityController {
 	@SuppressWarnings("rawtypes")
 	@Operation(
 		summary = "권한 수정(완료)",
-		description = "권한을 수정한다 <br />" +
-			"{<br />" +
-			"\"authorityName\": \"name1\",<br />" +
-			"\"description\": \"설명2\", <br />" +
-			"\"readYn\": [\"false\", \"true\", \"true\", \"true\", \"false\", \"true\", \"true\", \"true\"],<br />" +
-			"\"controlYn\": [\"false\", \"false\", \"true\", \"true\", \"false\", \"true\", \"true\", \"true\"],<br />"
-			+
-			"\"useYn\": \"true\"<br />" +
-			"}",
+		description = "권한을 수정한다 <br />"
+			+ "{<br />"
+			+ "\"authorityName\": \"name1\",<br />"
+			+ "\"description\": \"설명2\", <br />"
+			+ "\"readYn\": [\"false\", \"true\", \"true\", \"true\", \"false\", \"true\", \"true\", \"true\"],<br />"
+			+ "\"controlYn\": [\"false\", \"false\", \"true\", \"true\", \"false\", \"true\", \"true\", \"true\"],<br />"
+			+ "\"useYn\": \"true\"<br />"
+			+ "}",
 		security = {
 			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
 		},
@@ -161,4 +158,5 @@ public class AuthorityController {
 	public ResponseEntity findMenu() {
 		return ResponseEntity.ok(this.authorityService.findMenu());
 	}
+
 }

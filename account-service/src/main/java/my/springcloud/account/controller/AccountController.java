@@ -54,18 +54,18 @@ public class AccountController {
 	@SuppressWarnings("rawtypes")
 	@Operation(
 		summary = "계정 등록(완료)",
-		description = "계정을 등록한다 <br />" +
-			"{<br />" +
-			"\"username\": \"username1\",<br />" +
-			"\"password\": \"passsword123\",<br />" +
-			"\"authority\": { <br />" +
-			"\"authorityId\": 21<br />" +
-			"},<br />" +
-			"\"accountName\": \"admin2\",<br />" +
-			"\"companyName\": \"plea\",<br />" +
-			"\"phoneNumber\": \"01012345678\",<br />" +
-			"\"email\": \"abc@test.com\"<br />" +
-			"}",
+		description = "계정을 등록한다 <br />"
+			+ "{<br />"
+			+ "\"username\": \"username1\",<br />"
+			+ "\"password\": \"passsword123\",<br />"
+			+ "\"authority\": { <br />"
+			+ "\"authorityId\": 21<br />"
+			+ "},<br />"
+			+ "\"accountName\": \"admin2\",<br />"
+			+ "\"companyName\": \"plea\",<br />"
+			+ "\"phoneNumber\": \"01012345678\",<br />"
+			+ "\"email\": \"abc@test.com\"<br />"
+			+ "}",
 		security = {
 			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
 		},
@@ -99,9 +99,9 @@ public class AccountController {
 	@SuppressWarnings("rawtypes")
 	@Operation(
 		summary = "계정 목록 조회(완료)",
-		description = "계정 목록 조회<br />" +
-			"searchCondition: \"\", \"accountName\", \"username\", \"companyName\"<br />" +
-			"searchType: authorityName중 선택된 항목들을 묶어서 ,로 구분시킨 String ex)\"운영자,슈퍼어드민,name\", \"운영자,슈퍼어드민\" etc...",
+		description = "계정 목록 조회<br />"
+			+ "searchCondition: \"\", \"accountName\", \"username\", \"companyName\"<br />"
+			+ "searchType: authorityName중 선택된 항목들을 묶어서 ,로 구분시킨 String ex)\"운영자,슈퍼어드민,name\", \"운영자,슈퍼어드민\" etc...",
 		security = {
 			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
 		},
@@ -127,16 +127,16 @@ public class AccountController {
 	@SuppressWarnings("rawtypes")
 	@Operation(
 		summary = "계정 수정(완료)",
-		description = "계정을 수정한다<br />" +
-			"{<br />" +
-			"\"username\": \"username1\",<br />" +
-			"\"password\": \"passsword123\",<br />" +
-			"\"authority\": { <br />" +
-			"\"authorityId\": 21<br />" +
-			"},<br />" +
-			"\"phoneNumber\": \"01012345678\",<br />" +
-			"\"email\": \"abc@test.com\"<br />" +
-			"}",
+		description = "계정을 수정한다<br />"
+			+ "{<br />"
+			+ "\"username\": \"username1\",<br />"
+			+ "\"password\": \"passsword123\",<br />"
+			+ "\"authority\": { <br />"
+			+ "\"authorityId\": 21<br />"
+			+ "},<br />"
+			+ "\"phoneNumber\": \"01012345678\",<br />"
+			+ "\"email\": \"abc@test.com\"<br />"
+			+ "}",
 		security = {
 			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
 		},

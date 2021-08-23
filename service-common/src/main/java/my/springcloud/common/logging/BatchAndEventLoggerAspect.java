@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import my.springcloud.common.constants.CommonConstants;
 import my.springcloud.common.constants.ResponseCodeType;
 import my.springcloud.common.exception.ServiceException;
-import my.springcloud.common.exception.SettopboxException;
 
 @Slf4j(topic = CommonConstants.LOGGER_NAME)
 @Component

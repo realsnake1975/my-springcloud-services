@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import lombok.extern.slf4j.Slf4j;
-import my.springcloud.account.exception.AdminAuthException;
+import my.springcloud.account.exception.AuthException;
 import my.springcloud.common.constants.CommonConstants;
 import my.springcloud.common.constants.ResponseCodeType;
 import my.springcloud.common.sec.model.CustomUserDetails;
@@ -48,7 +48,7 @@ public class ReconfirmInterceptor implements HandlerInterceptor {
 			return this.passwordEncoder.matches(String.valueOf(accountId), tempToken);
 		} catch (Exception e) {
 			log.error("Invalid reconfirmToken! token: {}, accountId: {}", tempToken, accountId, e);
-			throw new AdminAuthException(ResponseCodeType.SERVER_ERROR_41001002);
+			throw new AuthException(ResponseCodeType.SERVER_ERROR_41001002);
 		}
 	}
 
