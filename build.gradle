@@ -72,7 +72,9 @@ subprojects {
         implementation("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
         implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${jacksonVersion}")
         implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}")
-        implementation("com.fasterxml.jackson.module:jackson-module-afterburner:${jacksonVersion}")
+        // implementation("com.fasterxml.jackson.module:jackson-module-afterburner:${jacksonVersion}")
+        // Java 11+, use blackbird instead of afterburner
+        implementation("org.jdbi.jackson-contrib:jackson-module-blackbird:0.0.1")
         implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jacksonVersion}")
 
         // lombok
@@ -179,6 +181,8 @@ project(":service-common") {
         api("commons-io:commons-io:2.11.0")
         api("commons-fileupload:commons-fileupload:1.4")
         api("org.apache.commons:commons-text:1.9")
+
+        api("com.google.code.findbugs:annotations:3.0.1")
     }
 
     // 인텔리제이 Annotation processor 에 생성되는 'src/main/generated' 디렉터리 삭제

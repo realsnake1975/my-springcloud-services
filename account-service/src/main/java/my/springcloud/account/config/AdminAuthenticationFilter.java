@@ -50,10 +50,9 @@ public class AdminAuthenticationFilter extends UsernamePasswordAuthenticationFil
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
 		AuthCheck authCheck = this.objectMapper.readValue(request.getInputStream(), AuthCheck.class);
-		log.debug("> 로그인 시도: {}", authCheck.toString());
+		log.debug("로그인 시도: {}", authCheck.toString());
 
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(authCheck,
-			"");
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(authCheck, "");
 
 		// AdminAuthenticationProvider 호출
 		return authenticationManager.authenticate(authenticationToken);
@@ -64,8 +63,7 @@ public class AdminAuthenticationFilter extends UsernamePasswordAuthenticationFil
 		FilterChain filterChain, Authentication authentication) throws IOException {
 		// loadUserByUsername이 반환한 UserDetails(AdminUserDetails)
 		CustomUserDetails admin = (CustomUserDetails)authentication.getPrincipal();
-		log.debug("> 인증 성공, accountId: {}, username: {}, name: {}, roles: {}", admin.getAccountId(),
-			admin.getUsername(), admin.getName(), admin.getAuthorities());
+		log.debug("인증 성공, accountId: {}, username: {}, name: {}, roles: {}", admin.getAccountId(), admin.getUsername(), admin.getName(), admin.getAuthorities());
 
 		// JWT 생성
 		String accessToken = this.customUserDetailsHelper.generateAccessToken(admin);
@@ -80,9 +78,7 @@ public class AdminAuthenticationFilter extends UsernamePasswordAuthenticationFil
 
 		response.setStatus(HttpStatus.OK.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-		response.getWriter()
-			.write(this.objectMapper.writeValueAsString(
-				new CommonModel<>(responseCodeType, new TokenDetail(accessToken, refreshToken))));
+		response.getWriter().write(this.objectMapper.writeValueAsString(new CommonModel<>(responseCodeType, new TokenDetail(accessToken, refreshToken))));
 		response.flushBuffer();
 	}
 
@@ -90,7 +86,7 @@ public class AdminAuthenticationFilter extends UsernamePasswordAuthenticationFil
 	@Override
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
 		AuthenticationException failed) throws IOException {
-		log.info("> 인증 실패: {}", failed.toString());
+		log.info("인증 실패: {}", failed.toString());
 
 		SecurityContextHolder.clearContext();
 

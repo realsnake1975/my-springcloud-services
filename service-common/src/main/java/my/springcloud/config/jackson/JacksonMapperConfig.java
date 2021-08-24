@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 import my.springcloud.config.jackson.module.CustomModule;
@@ -32,7 +32,7 @@ public class JacksonMapperConfig {
 				new JavaTimeModule(),
 				new LocalDateTimeModule(),
 				new CustomModule(),
-				new AfterburnerModule()
+				new BlackbirdModule()
 			)
 			.indentOutput(true)
 			.failOnEmptyBeans(false)

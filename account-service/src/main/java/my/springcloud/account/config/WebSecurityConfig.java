@@ -38,7 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private final AdminAuthenticationProvider adminAuthenticationProvider;
 	private final AdminAccessDecisionVoter adminAccessDecisionVoter;
 
-	@Value("${jwt.exp:3}")
+	@Value("${jwt.exp:180}")
 	private long jwtExp;
 
 	@Override

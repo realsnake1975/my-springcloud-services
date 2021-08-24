@@ -10,6 +10,7 @@ import my.springcloud.config.mapstruct.MapstructConfig;
 @Mapper(config = MapstructConfig.class)
 public interface AccountMapper {
 
+	@Mapping(target = "publish", ignore = true)
 	Account toEntity(AccountDetail dto);
 
 	@Mapping(target = "loginHistories", ignore = true)

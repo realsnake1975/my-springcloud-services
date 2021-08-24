@@ -70,8 +70,7 @@ public class AdminAccessDecisionVoter implements AccessDecisionVoter {
 	@Override
 	@Transactional
 	public int vote(Authentication authentication, Object object, Collection collection) {
-		log.debug("> HTTP method: {}, URI: {}, free pass uris: {}", this.request.getMethod(),
-			this.request.getRequestURI(), FREE_PASSES);
+		log.debug("> HTTP method: {}, URI: {}, free pass uris: {}", this.request.getMethod(), this.request.getRequestURI(), FREE_PASSES);
 
 		if (FREE_PASSES.stream().anyMatch(fp -> this.request.getRequestURI().contains(fp))) {
 			return ACCESS_GRANTED;
@@ -100,10 +99,8 @@ public class AdminAccessDecisionVoter implements AccessDecisionVoter {
 			List<MenuAuthority> menuAuthorities = authority.getMenuAuthorities();
 
 			int accessNum = menuAuthorities.stream()
-				.filter(ma -> ma.getMenu().getMenuUrl() != null && this.request.getRequestURI()
-					.contains(ma.getMenu().getMenuUrl()))
-				.filter(ma -> Boolean.TRUE.equals(ma.isControlYn()) || (Boolean.TRUE.equals(ma.isReadYn())
-					&& ALLOWED_HTTP_METHODS_BYREADYN.contains(this.request.getMethod())))
+				.filter(ma -> ma.getMenu().getMenuUrl() != null && this.request.getRequestURI().contains(ma.getMenu().getMenuUrl()))
+				.filter(ma -> Boolean.TRUE.equals(ma.isControlYn()) || (Boolean.TRUE.equals(ma.isReadYn()) && ALLOWED_HTTP_METHODS_BYREADYN.contains(this.request.getMethod())))
 				.findAny()
 				.map(ma -> ACCESS_GRANTED)
 				.orElse(ACCESS_DENIED);

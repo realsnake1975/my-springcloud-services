@@ -2,7 +2,6 @@ package my.springcloud.account.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -15,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import my.springcloud.account.domain.aggregate.Account;
+import my.springcloud.account.domain.entity.Authority;
 import my.springcloud.account.domain.repository.AccountRepository;
 import my.springcloud.account.domain.repository.AuthorityRepository;
 import my.springcloud.account.domain.repository.LoginHistoryRepository;
@@ -22,11 +22,12 @@ import my.springcloud.account.domain.spec.AccountSpec;
 import my.springcloud.account.mapper.AccountMapper;
 import my.springcloud.common.constants.AccountStatusType;
 import my.springcloud.common.constants.ResponseCodeType;
-import my.springcloud.common.exception.ExceptionFunction;
 import my.springcloud.common.exception.ResourceNotFoundException;
 import my.springcloud.common.exception.ServiceException;
+import my.springcloud.common.model.account.AccountCreate;
 import my.springcloud.common.model.account.AccountDetail;
 import my.springcloud.common.model.account.AccountModify;
+import my.springcloud.common.model.account.AuthorityDetail;
 import my.springcloud.common.sec.model.CustomUserDetails;
 import my.springcloud.common.utils.TextUtils;
 
@@ -35,6 +36,7 @@ import my.springcloud.common.utils.TextUtils;
 @Transactional
 @Service
 public class AccountService {
+
 	private final PasswordEncoder passwordEncoder;
 
 	private final AccountRepository accountRepository;
@@ -87,7 +89,7 @@ public class AccountService {
 	 * @param accountCreate
 	 * @return
 	 */
-	public AccountDetail create(UserDetails userDetails, AccountDetail accountCreate) {
+	public AccountDetail create(UserDetails userDetails, AccountCreate accountCreate) {
 		PasswordValidator.validatePassword(accountCreate.getPassword());
 
 		CustomUserDetails loginUser = (CustomUserDetails) userDetails;
@@ -97,7 +99,10 @@ public class AccountService {
 		String encodedPassword = this.passwordEncoder.encode(accountCreate.getPassword());
 		accountCreate.setPassword(encodedPassword);
 
-		AccountDetail accountDetail = this.accountMapper.toDto(this.accountRepository.save(this.accountMapper.toEntity(accountCreate)));
+		Account account = this.accountMapper.toEntity(accountCreate);
+		account.setAuthority(this.authorityRepository.findById(accountCreate.getAuthorityId()).orElseThrow(ResourceNotFoundException::new));
+
+		AccountDetail accountDetail = this.accountMapper.toDto(this.accountRepository.save(account.publish("reg")));
 		accountDetail.setPassword("");
 		accountDetail.convertXss();
 
@@ -131,10 +136,9 @@ public class AccountService {
 				account.setPasswordUpdDt(LocalDateTime.now());
 			}
 
-			account.setAuthority(this.authorityRepository.getOne(accountModify.getAuthority().getAuthorityId()));
+			account.setAuthority(this.authorityRepository.findById(accountModify.getAuthorityId()).orElseThrow(ResourceNotFoundException::new));
 			account.setPhoneNumber(accountModify.getPhoneNumber());
 			account.setEmail(accountModify.getEmail());
-			account.setUpdDt(LocalDateTime.now());
 			account.setUpdId(loginUser.getUsername());
 		}
 
@@ -227,17 +231,6 @@ public class AccountService {
 		}));
 
 		return true;
-	}
-
-	private <T, R> Function<T, R> wrap(ExceptionFunction<T, R> ef) {
-		return (T t) -> {
-			try {
-				return ef.apply(t);
-			}
-			catch(Exception e) {
-				throw new ServiceException(ResponseCodeType.SERVER_ERROR_43001004);
-			}
-		};
 	}
 
 }

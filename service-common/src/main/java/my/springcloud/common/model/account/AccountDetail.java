@@ -41,7 +41,7 @@ public class AccountDetail implements Serializable {
 	@Schema(name = "username", description = "계정아이디")
 	private String username;
 
-	@Schema(name = "authority", description = "권한아이디")
+	@Schema(name = "authority", description = "권한")
 	private AuthorityDetail authority;
 
 	@Schema(name = "loginHistories", description = "로그인 이력")

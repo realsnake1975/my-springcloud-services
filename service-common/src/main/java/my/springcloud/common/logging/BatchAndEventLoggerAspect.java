@@ -57,9 +57,8 @@ public class BatchAndEventLoggerAspect extends LoggerAspect {
 		ResponseCodeType responseCodeType;
 		if (e instanceof ServiceException) {
 			responseCodeType = ((ServiceException)e).getResponseCodeType();
-		} else if (e instanceof SettopboxException) {
-			responseCodeType = ((SettopboxException)e).getResponseCodeType();
-		} else {
+		}
+		else {
 			responseCodeType = ResponseCodeType.SERVER_ERROR_43001004;
 		}
 

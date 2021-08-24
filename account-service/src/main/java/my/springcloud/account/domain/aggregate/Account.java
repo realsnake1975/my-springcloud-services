@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import org.springframework.data.domain.AbstractAggregateRoot;
 
@@ -91,8 +90,9 @@ public class Account extends AbstractAggregateRoot<Account> implements Serializa
 	private LocalDateTime accountLockedDt;
 
 	// https://daddyprogrammer.org/post/14797/springboot-domainevent/, https://namjug-kim.github.io/2020/03/24/spring-ddd-domain-event.html
-	public void registerEvent(@NotNull CustomEvent<Account> event) {
-		super.registerEvent(event);
+	public Account publish(String eventType) {
+		super.registerEvent(new CustomEvent<>(eventType, this));
+		return this;
 	}
 
 }

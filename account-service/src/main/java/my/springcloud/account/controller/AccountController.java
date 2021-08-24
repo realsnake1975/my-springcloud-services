@@ -54,17 +54,15 @@ public class AccountController {
 	@SuppressWarnings("rawtypes")
 	@Operation(
 		summary = "계정 등록(완료)",
-		description = "계정을 등록한다 <br />"
+		description = "계정을 등록한다. 예)<br />"
 			+ "{<br />"
-			+ "\"username\": \"username1\",<br />"
-			+ "\"password\": \"passsword123\",<br />"
-			+ "\"authority\": { <br />"
-			+ "\"authorityId\": 21<br />"
-			+ "},<br />"
-			+ "\"accountName\": \"admin2\",<br />"
-			+ "\"companyName\": \"plea\",<br />"
-			+ "\"phoneNumber\": \"01012345678\",<br />"
-			+ "\"email\": \"abc@test.com\"<br />"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;\"username\": \"user1\",<br />"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;\"password\": \"!@User12\",<br />"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;\"authorityId\": 1,<br />"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;\"accountName\": \"전강욱\",<br />"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;\"companyName\": \"(주)리얼스네이크\",<br />"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;\"phoneNumber\": \"01012345678\",<br />"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;\"email\": \"realsnake1975@gamil.com\"<br />"
 			+ "}",
 		security = {
 			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
@@ -101,17 +99,17 @@ public class AccountController {
 		summary = "계정 목록 조회(완료)",
 		description = "계정 목록 조회<br />"
 			+ "searchCondition: \"\", \"accountName\", \"username\", \"companyName\"<br />"
-			+ "searchType: authorityName중 선택된 항목들을 묶어서 ,로 구분시킨 String ex)\"운영자,슈퍼어드민,name\", \"운영자,슈퍼어드민\" etc...",
+			+ "searchType: authorityName 중 선택된 항목들을 묶어서 ,로 구분시킨 String ex)\"운영자,슈퍼어드민,name\", \"운영자,슈퍼어드민\" etc...",
 		security = {
 			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
 		},
 		parameters = {
-			@Parameter(name = "searchCondition", in = ParameterIn.QUERY, required = false, description = "검색조건", example = ""),
-			@Parameter(name = "searchKeyword", in = ParameterIn.QUERY, required = false, description = "검색어", example = ""),
-			@Parameter(name = "searchType", in = ParameterIn.QUERY, required = false, description = "유형", example = "", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
-			@Parameter(name = "page", in = ParameterIn.QUERY, required = false, description = "페이지 번호", example = ""),
-			@Parameter(name = "size", in = ParameterIn.QUERY, required = false, description = "페이지 목록 사이즈", example = ""),
-			@Parameter(name = "sort", in = ParameterIn.QUERY, required = false, description = "정렬 조건(sort=regDt,asc, username,asc, accountName,asc)", example = "")
+			@Parameter(name = "searchCondition", in = ParameterIn.QUERY, description = "검색조건", example = ""),
+			@Parameter(name = "searchKeyword", in = ParameterIn.QUERY, description = "검색어", example = ""),
+			@Parameter(name = "searchType", in = ParameterIn.QUERY, description = "유형", example = "", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
+			@Parameter(name = "page", in = ParameterIn.QUERY, description = "페이지 번호", example = ""),
+			@Parameter(name = "size", in = ParameterIn.QUERY, description = "페이지 목록 사이즈", example = ""),
+			@Parameter(name = "sort", in = ParameterIn.QUERY, description = "정렬 조건(sort=regDt,asc, username,asc, accountName,asc)", example = "")
 		},
 		responses = {
 			@ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDetail.class)))
@@ -127,15 +125,14 @@ public class AccountController {
 	@SuppressWarnings("rawtypes")
 	@Operation(
 		summary = "계정 수정(완료)",
-		description = "계정을 수정한다<br />"
+		description = "계정을 수정한다. 예)<br />"
 			+ "{<br />"
-			+ "\"username\": \"username1\",<br />"
-			+ "\"password\": \"passsword123\",<br />"
-			+ "\"authority\": { <br />"
-			+ "\"authorityId\": 21<br />"
-			+ "},<br />"
-			+ "\"phoneNumber\": \"01012345678\",<br />"
-			+ "\"email\": \"abc@test.com\"<br />"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;\"password\": \"!@User12\",<br />"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;\"authorityId\": 1,<br />"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;\"accountName\": \"전강욱\",<br />"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;\"companyName\": \"(주)리얼스네이크\",<br />"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;\"phoneNumber\": \"01012345678\",<br />"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;\"email\": \"realsnake1975@gamil.com\"<br />"
 			+ "}",
 		security = {
 			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)

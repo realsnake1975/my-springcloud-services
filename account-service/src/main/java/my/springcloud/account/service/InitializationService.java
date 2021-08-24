@@ -59,8 +59,7 @@ public class InitializationService implements CommandLineRunner {
 
 	@Transactional
 	public Authority saveOrGetAuthorities(List<Menu> menus) {
-		Optional<Authority> maybeSuperadmin = this.authorityRepository.findTop1ByAuthorityName(
-			RoleType.SUPERADMIN.getName());
+		Optional<Authority> maybeSuperadmin = this.authorityRepository.findTop1ByAuthorityName(RoleType.SUPERADMIN.getName());
 		LocalDateTime now = LocalDateTime.now();
 
 		Authority saAuth;
@@ -69,7 +68,7 @@ public class InitializationService implements CommandLineRunner {
 		} else {
 			saAuth = new Authority();
 			saAuth.setAuthorityName(RoleType.SUPERADMIN.getName());
-			saAuth.setDescription("유플러스 사업팀");
+			saAuth.setDescription("서비스기획팀");
 			saAuth.setUseYn(true);
 			saAuth.setRegId(REG_USER_ID);
 			saAuth.setRegDt(now);
@@ -91,12 +90,11 @@ public class InitializationService implements CommandLineRunner {
 			saAuth.getMenuAuthorities().addAll(menuAuthorities);
 		}
 
-		Optional<Authority> maybeOperator = this.authorityRepository.findTop1ByAuthorityName(
-			RoleType.OPERATOR.getName());
+		Optional<Authority> maybeOperator = this.authorityRepository.findTop1ByAuthorityName(RoleType.OPERATOR.getName());
 		if (maybeOperator.isEmpty()) {
 			Authority operator = new Authority();
 			operator.setAuthorityName(RoleType.OPERATOR.getName());
-			operator.setDescription("유플러스 사업팀");
+			operator.setDescription("서비스기획팀");
 			operator.setUseYn(true);
 			operator.setRegId(REG_USER_ID);
 			operator.setRegDt(now);
@@ -111,8 +109,7 @@ public class InitializationService implements CommandLineRunner {
 	@Transactional
 	public void saveAdminAccountIfEmpty(Authority saAuth) {
 		List<Account> accounts = this.accountRepository.findAll();
-		boolean nonExistsSueradmin = accounts.stream()
-			.noneMatch(a -> a.getAuthority().getAuthorityName().equals(RoleType.SUPERADMIN.getName()));
+		boolean nonExistsSueradmin = accounts.stream().noneMatch(a -> a.getAuthority().getAuthorityName().equals(RoleType.SUPERADMIN.getName()));
 		boolean nonExistsUsernameAdmin = accounts.stream().noneMatch(a -> a.getUsername().equals("admin"));
 
 		if (nonExistsSueradmin && nonExistsUsernameAdmin) {

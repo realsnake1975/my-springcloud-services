@@ -29,20 +29,18 @@ import my.springcloud.common.constants.CommonConstants;
 @NoArgsConstructor
 public class CustomUserDetailsHelper {
 
-	// private static final long JWT_EXP = 3; // 단위: 시간
 	private static final String JWT_SECRET = "7w!z%C*F-JaNdRgUjXn2r5u8x/A?D(G+KbPeShVmYp3s6v9y$B&E)H@McQfTjWnZ";
 
 	// JWT Header
 	private static final String TOKEN_TYPE = "JWT";
-	private static final String TOKEN_ISSUER = "uplus.co.kr";
-	private static final String TOKEN_SUBJECT = "uplus";
+	private static final String TOKEN_ISSUER = "realsnake.co.kr";
+	private static final String TOKEN_SUBJECT = "realsnake";
 
 	private static final String TIME_ZONE = "Asia/Seoul";
 
-	private final CustomUserDetails systemUser = new CustomUserDetails("system", "시스템",
-		Collections.singletonList(new SimpleGrantedAuthority("ROLE_SYSTEM")), 0L);
+	private final CustomUserDetails systemUser = new CustomUserDetails("system", "시스템", Collections.singletonList(new SimpleGrantedAuthority("ROLE_SYSTEM")), 0L);
 
-	private long jwtExp = 3;
+	private long jwtExp = 180; // 단위: 분
 
 	public CustomUserDetailsHelper(long jwtExp) {
 		this.jwtExp = jwtExp;
