@@ -59,8 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()
 			.logout()
 			.logoutUrl("/opr/v1/logout")
-			.logoutSuccessHandler(this.logoutSuccessHandler())
-		;
+			.logoutSuccessHandler(this.logoutSuccessHandler());
 	}
 
 	@Override
@@ -71,8 +70,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@SuppressWarnings("unchecked")
 	@Bean
 	public AccessDecisionManager accessDecisionManager() {
-		return new UnanimousBased(Arrays.asList(new WebExpressionVoter(), new RoleVoter(), new AuthenticatedVoter(),
-			this.adminAccessDecisionVoter));
+		return new UnanimousBased(Arrays.asList(new WebExpressionVoter(), new RoleVoter(), new AuthenticatedVoter(), this.adminAccessDecisionVoter));
 	}
 
 	@Bean
@@ -109,13 +107,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	 */
 	@Override
 	public void configure(WebSecurity web) {
-		web.ignoring().antMatchers("/actuator/**"
-			, "/swagger-ui.html"
-			, "/swagger*/**"
-			, "/webjars/**"
-			, "/h2-console*/**"
-			, "/favicon.ico"
-			, "/v3/api-docs/**"
+		web.ignoring().antMatchers(
+			"/actuator/**",
+			"/swagger-ui.html",
+			"/swagger*/**",
+			"/webjars/**",
+			"/h2-console*/**",
+			"/favicon.ico",
+			"/v3/api-docs/**"
 		);
 	}
 

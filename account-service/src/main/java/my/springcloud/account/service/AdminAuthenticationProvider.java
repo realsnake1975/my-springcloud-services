@@ -11,8 +11,8 @@ import my.springcloud.common.model.auth.AuthCheck;
 import my.springcloud.common.sec.model.CustomUserDetails;
 
 @Slf4j
-@Component
 @RequiredArgsConstructor
+@Component
 public class AdminAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
 	private final AuthService authService;
@@ -20,14 +20,13 @@ public class AdminAuthenticationProvider extends AbstractUserDetailsAuthenticati
 
 	@Override
 	protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) {
-		final AuthCheck authCheck = (AuthCheck)authentication.getPrincipal();
+		final AuthCheck authCheck = (AuthCheck) authentication.getPrincipal();
 		return this.adminDetailsService.checkLoginHistoryAndFindUser(authCheck);
 	}
 
 	@Override
-	protected void additionalAuthenticationChecks(UserDetails userDetails,
-		UsernamePasswordAuthenticationToken authentication) {
-		final CustomUserDetails admin = (CustomUserDetails)userDetails;
+	protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) {
+		final CustomUserDetails admin = (CustomUserDetails) userDetails;
 		boolean nonExpiredPasswordYn = this.authService.updateLoginDtAndCheckNonExpiredPassword(admin.getAccountId());
 		admin.setNonExpiredPasswordYn(nonExpiredPasswordYn);
 	}

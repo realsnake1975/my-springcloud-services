@@ -9,8 +9,7 @@ public enum AccountStatusType {
 
 	APPROVAL("approval", "승인", true, true, 1),
 	BLOCK("block", "차단", true, false, 2),
-	LOCKED("lock", "잠김", false, false, 3),
-	;
+	LOCKED("lock", "잠김", false, false, 3);
 
 	private final String code;
 	private final String desc;
@@ -28,8 +27,8 @@ public enum AccountStatusType {
 
 	public static List<AccountStatusType> sortedValues() {
 		return Arrays.stream(values())
-			.filter(e -> e.openYn())
-			.sorted(Comparator.comparingInt(e -> e.sortOrder()))
+			.filter(AccountStatusType::openYn)
+			.sorted(Comparator.comparingInt(AccountStatusType::sortOrder))
 			.collect(Collectors.toList());
 	}
 

@@ -68,27 +68,27 @@ public interface CommonConstants {
 	// 허용하는 이미지 파일의 확장자
 	List<String> ALLOWED_IMAGE_EXT = Arrays.asList("png", "jpeg", "jpg", "gif");
 	// 허용하는 파일의 확장자
-	List<String> ALLOWED_FILE_EXT = Arrays.asList("png", "jpeg", "jpg", "gif", "pdf", "hwp", "doc", "docx", "xls",
-		"xlsx", "ppt", "pptx");
+	List<String> ALLOWED_FILE_EXT = Arrays.asList("png", "jpeg", "jpg", "gif", "pdf", "hwp", "doc", "docx", "xls", "xlsx", "ppt", "pptx");
 
 	List<String> ALLOWED_IMAGE_MIME_TYPES = Arrays.asList("image/gif", "image/jpeg", "image/jpg", "image/png");
+
 	List<String> ALLOWED_FILE_MIME_TYPES = Arrays.asList(
-		"image/gif"
-		, "image/jpeg"
-		, "image/jpg"
-		, "image/png"
-		, "application/pdf"
-		, "application/x-hwp"
-		, "applicaion/haansofthwp"
-		, "applicaion/vnd.hancom"
-		, "application/octet-stream"
-		, "application/msword"
-		, "application/vnd.ms-word"
-		, "application/vnd.ms-excel"
-		, "application/vnd.ms-powerpoint"
-		, "application/vnd.openxmlformats-officedocument"
-		, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-		, "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+		"image/gif",
+		"image/jpeg",
+		"image/jpg",
+		"image/png",
+		"application/pdf",
+		"application/x-hwp",
+		"applicaion/haansofthwp",
+		"applicaion/vnd.hancom",
+		"application/octet-stream",
+		"application/msword",
+		"application/vnd.ms-word",
+		"application/vnd.ms-excel",
+		"application/vnd.ms-powerpoint",
+		"application/vnd.openxmlformats-officedocument",
+		"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+		"application/vnd.openxmlformats-officedocument.presentationml.presentation"
 	);
 
 	// 10M

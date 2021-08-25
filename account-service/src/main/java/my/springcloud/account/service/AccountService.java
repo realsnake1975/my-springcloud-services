@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import my.springcloud.account.domain.aggregate.Account;
-import my.springcloud.account.domain.entity.Authority;
 import my.springcloud.account.domain.repository.AccountRepository;
 import my.springcloud.account.domain.repository.AuthorityRepository;
 import my.springcloud.account.domain.repository.LoginHistoryRepository;
@@ -27,7 +26,6 @@ import my.springcloud.common.exception.ServiceException;
 import my.springcloud.common.model.account.AccountCreate;
 import my.springcloud.common.model.account.AccountDetail;
 import my.springcloud.common.model.account.AccountModify;
-import my.springcloud.common.model.account.AuthorityDetail;
 import my.springcloud.common.sec.model.CustomUserDetails;
 import my.springcloud.common.utils.TextUtils;
 
@@ -52,8 +50,8 @@ public class AccountService {
 	/**
 	 * 계정 단건 조회
 	 *
-	 * @param id
-	 * @return
+	 * @param id 계정 아이디
+	 * @return 계정 상세
 	 */
 	@Transactional(readOnly = true)
 	public AccountDetail find(long id) {
@@ -68,9 +66,9 @@ public class AccountService {
 	/**
 	 * 계정 목록 조회
 	 *
-	 * @param spec
-	 * @param pageable
-	 * @return
+	 * @param spec 검색 조건
+	 * @param pageable 페이징
+	 * @return 계정 목록 페이징
 	 */
 	@Transactional(readOnly = true)
 	public Page<AccountDetail> find(AccountSpec spec, Pageable pageable) {
@@ -85,9 +83,9 @@ public class AccountService {
 	/**
 	 * 계정 등록
 	 *
-	 * @param userDetails
-	 * @param accountCreate
-	 * @return
+	 * @param userDetails 로그인 사용자 데이타
+	 * @param accountCreate 등록할 계정 데이타
+	 * @return 계정 상세
 	 */
 	public AccountDetail create(UserDetails userDetails, AccountCreate accountCreate) {
 		PasswordValidator.validatePassword(accountCreate.getPassword());
@@ -100,7 +98,7 @@ public class AccountService {
 		accountCreate.setPassword(encodedPassword);
 
 		Account account = this.accountMapper.toEntity(accountCreate);
-		account.setAuthority(this.authorityRepository.findById(accountCreate.getAuthorityId()).orElseThrow(ResourceNotFoundException::new));
+		account.setAuthority(this.authorityRepository.findById(accountCreate.getAuthorityId()).orElseThrow(() -> new ServiceException(ResponseCodeType.SERVER_ERROR_41001015)));
 
 		AccountDetail accountDetail = this.accountMapper.toDto(this.accountRepository.save(account.publish("reg")));
 		accountDetail.setPassword("");
@@ -112,10 +110,10 @@ public class AccountService {
 	/**
 	 * 계정 수정
 	 *
-	 * @param userDetails
-	 * @param id
-	 * @param accountModify
-	 * @return
+	 * @param userDetails 로그인 사용자 데이타
+	 * @param id 수정할 계정 아이디
+	 * @param accountModify 수정할 계정 데이타
+	 * @return 계정 상세
 	 */
 	public AccountDetail modify(UserDetails userDetails, long id, AccountModify accountModify) {
 		PasswordValidator.validatePassword(accountModify.getPassword());
@@ -136,7 +134,7 @@ public class AccountService {
 				account.setPasswordUpdDt(LocalDateTime.now());
 			}
 
-			account.setAuthority(this.authorityRepository.findById(accountModify.getAuthorityId()).orElseThrow(ResourceNotFoundException::new));
+			account.setAuthority(this.authorityRepository.findById(accountModify.getAuthorityId()).orElseThrow(() -> new ServiceException(ResponseCodeType.SERVER_ERROR_41001015)));
 			account.setPhoneNumber(accountModify.getPhoneNumber());
 			account.setEmail(accountModify.getEmail());
 			account.setUpdId(loginUser.getUsername());
@@ -152,8 +150,8 @@ public class AccountService {
 	/**
 	 * 계정 삭제
 	 *
-	 * @param ids
-	 * @return
+	 * @param ids 계정 아이디들
+	 * @return true or false
 	 */
 	public boolean remove(List<Long> ids) {
 		// TODO: 로그인 사용자 권한 체크
@@ -164,8 +162,8 @@ public class AccountService {
 	/**
 	 * 계정 중복 조회
 	 *
-	 * @param username
-	 * @return
+	 * @param username 로그인 아이디
+	 * @return true or false
 	 */
 	@Transactional(readOnly = true)
 	public boolean checkDuplicate(String username) {
@@ -175,7 +173,7 @@ public class AccountService {
 	/**
 	 * 계정 전체 조회
 	 *
-	 * @return
+	 * @return 계정 목록
 	 */
 	@Transactional(readOnly = true)
 	public List<AccountDetail> findAll() {
@@ -193,7 +191,9 @@ public class AccountService {
 	/**
 	 * 계정 차단
 	 *
-	 * @return
+	 * @param userDetails 로그인 사용자 데이타
+	 * @param ids 계정 아이디들
+	 * @return true or false
 	 */
 	public boolean blockAccounts(UserDetails userDetails, List<Long> ids) {
 		ids.forEach(id -> {
@@ -209,7 +209,9 @@ public class AccountService {
 	/**
 	 * 계정 승인
 	 *
-	 * @return
+	 * @param userDetails 로그인 사용자 데이타
+	 * @param ids 계정 아이디들
+	 * @return true or false
 	 */
 	public boolean permitAccounts(UserDetails userDetails, List<Long> ids) {
 		ids.forEach(id -> this.accountRepository.findById(id).ifPresent(a -> {

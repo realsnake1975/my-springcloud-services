@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,7 +42,7 @@ import my.springcloud.common.wrapper.CommonModel;
 
 @Slf4j
 @RequiredArgsConstructor
-@RefreshScope
+@Transactional
 @Service
 public class AuthService {
 
@@ -67,13 +66,11 @@ public class AuthService {
 
 	@Transactional(noRollbackFor = {AuthException.class})
 	public String login(LoginCheck dto) {
-		Account account = this.accountRepository.findByUsername(dto.getUsername())
-			.orElseThrow(ResourceNotFoundException::new);
+		Account account = this.accountRepository.findByUsername(dto.getUsername()).orElseThrow(ResourceNotFoundException::new);
 
 		this.checkAccountStatus(account.getStatus());
 
-		LoginHistory loginHistory = this.loginHistoryRepository.findTop1ByAccountIdOrderByHistorySeqDesc(
-			account.getAccountId())
+		LoginHistory loginHistory = this.loginHistoryRepository.findTop1ByAccountIdOrderByHistorySeqDesc(account.getAccountId())
 			.filter(h -> Objects.nonNull(h.getLoginFailCnt()) && (h.getLoginFailCnt() > 0 && h.getLoginFailCnt() < 5))
 			.orElseGet(LoginHistory::new);
 
@@ -125,8 +122,9 @@ public class AuthService {
 		int otpAuthTryCnt = loginHistory.getOtpAuthTryCnt();
 		loginHistory.setOtpAuthTryCnt(++otpAuthTryCnt);
 
-		if (otpAuthTryCnt % 10 == 0)
+		if (otpAuthTryCnt % 10 == 0) {
 			loginHistory.setLoginReqDt(LocalDateTime.now());
+		}
 
 		long diff = ChronoUnit.SECONDS.between(loginHistory.getLoginReqDt(), LocalDateTime.now());
 
@@ -152,8 +150,7 @@ public class AuthService {
 		loginHistory.setOtp(otp);
 
 		// 신규 OTP 발급 시, 이전 발급 OTP 파기
-		List<LoginHistory> loginHistories = this.loginHistoryRepository.findByAccountIdAndOtpNotNull(
-			loginHistory.getAccountId());
+		List<LoginHistory> loginHistories = this.loginHistoryRepository.findByAccountIdAndOtpNotNull(loginHistory.getAccountId());
 		loginHistories.stream()
 			.filter(h -> h.getHistorySeq() < loginHistory.getHistorySeq())
 			.forEach(h -> {
@@ -162,15 +159,10 @@ public class AuthService {
 				h.setOtp(null);
 			});
 
-		// OTP SMS 발송
-		//        OtpSmsSendDto dto = new OtpSmsSendDto(otp, account.getPhoneNumber());
-		//        CommonModel<Boolean> cm = this.uplusApiClient.sendOtp(dto);
-		//
-		//        return cm.getResult();
+		// TODO: OTP SMS 발송
 		return true;
 	}
 
-	@Transactional
 	public TokenDetail refreshAccessToken(String refreshToken) {
 		CustomUserDetailsHelper tokenHelper = new CustomUserDetailsHelper();
 		CustomUserDetails admin;
@@ -191,10 +183,8 @@ public class AuthService {
 
 	@Transactional(noRollbackFor = {AuthException.class})
 	public Account checkLoginHistory(String authToken, String otp) {
-		LoginHistory loginHistory = this.loginHistoryRepository.findTop1ByAuthTokenOrderByHistorySeqDesc(authToken)
-			.orElseThrow(() -> new AuthException(ResponseCodeType.SERVER_ERROR_41001001));
-		Account account = this.accountRepository.findById(loginHistory.getAccountId())
-			.orElseThrow(() -> new AuthException(ResponseCodeType.SERVER_ERROR_41001002));
+		LoginHistory loginHistory = this.loginHistoryRepository.findTop1ByAuthTokenOrderByHistorySeqDesc(authToken).orElseThrow(() -> new AuthException(ResponseCodeType.SERVER_ERROR_41001001));
+		Account account = this.accountRepository.findById(loginHistory.getAccountId()).orElseThrow(() -> new AuthException(ResponseCodeType.SERVER_ERROR_41001002));
 
 		this.checkAccountStatus(account.getStatus());
 
@@ -230,23 +220,18 @@ public class AuthService {
 		}
 	}
 
-	@Transactional
 	public boolean updateLoginDtAndCheckNonExpiredPassword(Long accountId) {
-		LoginHistory loginHistory = this.loginHistoryRepository.findTop1ByAccountIdOrderByHistorySeqDesc(accountId)
-			.orElseThrow(() -> new UsernameNotFoundException(accountId + " not exists."));
+		LoginHistory loginHistory = this.loginHistoryRepository.findTop1ByAccountIdOrderByHistorySeqDesc(accountId).orElseThrow(() -> new UsernameNotFoundException(accountId + " not exists."));
 		loginHistory.setLoginDt(LocalDateTime.now());
 
 		Account account = this.accountRepository.getOne(loginHistory.getAccountId());
-		LocalDateTime passwordUpdDt =
-			(account.getPasswordUpdDt() == null) ? account.getRegDt() : account.getPasswordUpdDt();
+		LocalDateTime passwordUpdDt = (account.getPasswordUpdDt() == null) ? account.getRegDt() : account.getPasswordUpdDt();
 
 		return !passwordUpdDt.isBefore(LocalDateTime.now().minusDays(90L));
 	}
 
-	@Transactional
 	public boolean changePassword(CustomUserDetails admin, PasswordUpdate dto) {
-		Account account = this.accountRepository.findById(admin.getAccountId())
-			.orElseThrow(ResourceNotFoundException::new);
+		Account account = this.accountRepository.findById(admin.getAccountId()).orElseThrow(ResourceNotFoundException::new);
 
 		if (this.passwordEncoder.matches(dto.getNewPassword(), account.getPassword())) { // 이전 비밀번호와 동일 비번 사용불가
 			throw new AuthException(ResponseCodeType.SERVER_ERROR_41001012);
@@ -270,8 +255,7 @@ public class AuthService {
 
 	@Transactional(readOnly = true)
 	public String checkPassword(CustomUserDetails admin, PasswordCheck dto) {
-		Account account = this.accountRepository.findById(admin.getAccountId())
-			.orElseThrow(ResourceNotFoundException::new);
+		Account account = this.accountRepository.findById(admin.getAccountId()).orElseThrow(ResourceNotFoundException::new);
 
 		if (this.passwordEncoder.matches(dto.getNowPassword(), account.getPassword())) {
 			String reconfirmToken = this.passwordEncoder.encode(String.valueOf(admin.getAccountId()));
@@ -302,7 +286,6 @@ public class AuthService {
 	}
 
 	public CommonModel<TokenDetail> authFinal(AuthCheck dto) {
-		log.debug("> AuthCheckDto: {}", dto.toString());
 		return this.authApiClient.authFinal(dto);
 	}
 
@@ -311,13 +294,11 @@ public class AuthService {
 		return model.getResult();
 	}
 
-	@Transactional
 	public void unlockAccount() {
 		LocalDateTime datetimeBefore = LocalDateTime.now().minusMinutes(30L);
 		log.debug("> 잠긴지 30분 지난 계정 해제, datetimeBefore: {}", datetimeBefore);
 
-		List<Account> lockedAccounts = this.accountRepository.findByStatusAndAccountLockedDtBefore(
-			AccountStatusType.LOCKED.code(), datetimeBefore);
+		List<Account> lockedAccounts = this.accountRepository.findByStatusAndAccountLockedDtBefore(AccountStatusType.LOCKED.code(), datetimeBefore);
 		lockedAccounts.forEach(a -> {
 			a.setStatus(AccountStatusType.APPROVAL.code());
 			a.setAccountLockedDt(null);

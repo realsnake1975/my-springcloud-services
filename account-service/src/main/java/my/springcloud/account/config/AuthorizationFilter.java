@@ -39,8 +39,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 	}
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-		FilterChain filterChain) throws IOException, ServletException {
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 		ResponseCodeType responseCodeType;
 		try {
 			if (request.getRequestURI().contains("/auth/login")) {
@@ -76,8 +75,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 		}
 
 		CustomUserDetails admin = this.customUserDetailsHelper.getSimpleUser(token);
-		log.debug("> 인증 여부 확인, accountId: {}, username: {}, name: {}, roles: {}", admin.getAccountId(),
-			admin.getUsername(), admin.getName(), admin.getAuthorities());
+		log.debug("> 인증 여부 확인, accountId: {}, username: {}, name: {}, roles: {}", admin.getAccountId(), admin.getUsername(), admin.getName(), admin.getAuthorities());
 
 		if (this.customUserDetailsHelper.isRefreshToken(token)) {
 			throw new SignatureException("인증 여부 확인은 accessToken만 가능합니다!");

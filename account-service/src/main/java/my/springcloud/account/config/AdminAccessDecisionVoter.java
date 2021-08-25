@@ -28,8 +28,8 @@ import my.springcloud.common.sec.model.CustomUserDetails;
 
 @SuppressWarnings("rawtypes")
 @Slf4j
-@Component
 @RequiredArgsConstructor
+@Component
 public class AdminAccessDecisionVoter implements AccessDecisionVoter {
 
 	private static final List<String> ALLOWED_HTTP_METHODS_BYREADYN = Arrays.asList(

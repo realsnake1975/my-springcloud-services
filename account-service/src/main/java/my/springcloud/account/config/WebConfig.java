@@ -23,7 +23,8 @@ public class WebConfig implements WebMvcConfigurer {
 		"/svc/v1/tutorials/**",
 		"/brdprd/v1/shoppingchannel/**",
 		"/orgn/v1/appmenus/**",
-		"/orgn/v1/containers/**");
+		"/orgn/v1/containers/**"
+	);
 	private final ReconfirmInterceptor reconfirmInterceptor;
 
 	@Override
@@ -33,8 +34,7 @@ public class WebConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(this.reconfirmInterceptor)
-			.addPathPatterns(URL_PATTERNS);
+		registry.addInterceptor(this.reconfirmInterceptor).addPathPatterns(URL_PATTERNS);
 	}
 
 }

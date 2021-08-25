@@ -84,8 +84,8 @@ public class AuthorityController {
 	)
 	@CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H39)
 	@GetMapping(value = "/{id}")
-	public ResponseEntity find(@AuthenticationPrincipal UserDetails userDetails, @PathVariable long id) {
-		return ResponseEntity.ok(this.authorityService.find(userDetails, id));
+	public ResponseEntity find(@PathVariable long id) {
+		return ResponseEntity.ok(this.authorityService.find(id));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -107,11 +107,11 @@ public class AuthorityController {
 	)
 	@CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H40)
 	@GetMapping(value = "")
-	public ResponseEntity find(@AuthenticationPrincipal UserDetails userDetails, AuthoritySpec spec,
+	public ResponseEntity find(AuthoritySpec spec,
 		@PageableDefault(page = 0, size = 10) @SortDefault.SortDefaults({
 			@SortDefault(sort = "authorityId", direction = Sort.Direction.ASC),
 		}) Pageable pageable) {
-		return ResponseEntity.ok(this.authorityService.find(userDetails, spec, pageable));
+		return ResponseEntity.ok(this.authorityService.find(spec, pageable));
 	}
 
 	@SuppressWarnings("rawtypes")

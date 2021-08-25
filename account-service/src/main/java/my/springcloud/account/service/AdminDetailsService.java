@@ -14,8 +14,8 @@ import my.springcloud.common.model.auth.AuthCheck;
 import my.springcloud.common.sec.model.CustomUserDetails;
 
 @Slf4j
-@Component
 @RequiredArgsConstructor
+@Component
 public class AdminDetailsService implements UserDetailsService {
 
 	private final AuthService authService;
@@ -27,19 +27,17 @@ public class AdminDetailsService implements UserDetailsService {
 		String[] infos = loginInfo.split(",", -1);
 
 		return new CustomUserDetails(
-			infos[0]
-			, infos[1]
-			, AuthorityUtils.createAuthorityList("ROLE_" + infos[2])
-			, Long.parseLong(infos[3])
+			infos[0],
+			infos[1],
+			AuthorityUtils.createAuthorityList("ROLE_" + infos[2]),
+			Long.parseLong(infos[3])
 		);
 	}
 
 	@Transactional(noRollbackFor = {AuthException.class})
 	public UserDetails checkLoginHistoryAndFindUser(AuthCheck authCheck) {
 		Account account = this.authService.checkLoginHistory(authCheck.getAuthToken(), authCheck.getOtp());
-		String loginInfo =
-			account.getUsername() + "," + account.getAccountName() + "," + account.getAuthority().getAuthorityId() + ","
-				+ account.getAccountId();
+		String loginInfo = account.getUsername() + "," + account.getAccountName() + "," + account.getAuthority().getAuthorityId() + "," + account.getAccountId();
 		return this.loadUserByUsername(loginInfo);
 	}
 

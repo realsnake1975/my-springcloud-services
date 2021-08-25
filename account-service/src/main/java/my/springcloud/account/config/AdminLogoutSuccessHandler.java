@@ -29,8 +29,7 @@ public class AdminLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler imp
 	}
 
 	@Override
-	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response,
-		Authentication authentication) throws IOException {
+	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
 		String refererUrl = request.getHeader("Referer");
 		log.debug("> 로그아웃: {}", refererUrl);
 
@@ -40,8 +39,7 @@ public class AdminLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler imp
 
 		response.setStatus(HttpStatus.OK.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-		response.getWriter()
-			.write(this.objectMapper.writeValueAsString(new CommonModel<>(ResponseCodeType.SUCCESS, true)));
+		response.getWriter().write(this.objectMapper.writeValueAsString(new CommonModel<>(ResponseCodeType.SUCCESS, true)));
 		response.flushBuffer();
 	}
 
