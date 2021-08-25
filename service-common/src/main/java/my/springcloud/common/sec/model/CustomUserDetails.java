@@ -47,8 +47,7 @@ public class CustomUserDetails implements UserDetails {
 		this.password = password;
 	}
 
-	public CustomUserDetails(String username, String name, Collection<? extends GrantedAuthority> authorities,
-		Long accountId) {
+	public CustomUserDetails(String username, String name, Collection<? extends GrantedAuthority> authorities, Long accountId) {
 		this(username, name, authorities);
 		this.accountId = accountId;
 	}

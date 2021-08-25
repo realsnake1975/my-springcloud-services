@@ -80,8 +80,7 @@ public class CommonModel<T> implements Serializable {
 			if (result instanceof Page) {
 				Page page = (Page)result;
 				this.result = (T)page.getContent();
-				this.pagination = new Pagination(page.getPageable().getPageSize(), page.getPageable().getPageNumber(),
-					page.getTotalElements(), page.getTotalPages());
+				this.pagination = new Pagination(page.getPageable().getPageSize(), page.getPageable().getPageNumber(), page.getTotalElements(), page.getTotalPages());
 			} else {
 				this.result = result;
 			}
