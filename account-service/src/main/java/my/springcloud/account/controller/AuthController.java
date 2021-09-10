@@ -127,6 +127,7 @@ public class AuthController {
 		}
 	)
 	@PostMapping("/accounts/check-reconfirm-token")
+	@Deprecated
 	public <U extends UserDetails> ResponseEntity checkReconfirmToken(@AuthenticationPrincipal U principal,
 		@RequestHeader("Reconfirm-Token") String reconfirmToken) {
 		return ResponseEntity.ok(this.authService.checkReconfirmToken((CustomUserDetails)principal, reconfirmToken));

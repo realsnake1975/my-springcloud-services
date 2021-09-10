@@ -1,7 +1,6 @@
 package my.springcloud.common.model.account;
 
 import java.io.Serializable;
-import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -15,6 +14,5 @@ public class AccountSearch implements Serializable {
 	// 검색조건 정의
 	private final String searchCondition;
 	private final String searchKeyword;
-	private final List<String> searchType;
 
 }

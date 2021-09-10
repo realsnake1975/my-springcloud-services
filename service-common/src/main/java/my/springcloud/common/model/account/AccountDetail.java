@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,6 +31,9 @@ import my.springcloud.common.utils.TextUtils;
 })
 @ToString(exclude = {
 	"accountId"
+})
+@JsonIgnoreProperties(value = {
+	"loginHistories"
 })
 @Schema(name = "AccountDetail", description = "계정 상세 DTO")
 public class AccountDetail implements Serializable {

@@ -80,7 +80,7 @@ public class AccountController {
 	@SuppressWarnings("rawtypes")
 	@Operation(
 		summary = "계정 단건 조회(완료)",
-		description = "계정 단건 조회",
+		description = "계정 단건을 조회한다.",
 		security = {
 			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
 		},
@@ -97,22 +97,21 @@ public class AccountController {
 	@SuppressWarnings("rawtypes")
 	@Operation(
 		summary = "계정 목록 조회(완료)",
-		description = "계정 목록 조회<br />"
-			+ "searchCondition: \"\", \"accountName\", \"username\", \"companyName\"<br />"
-			+ "searchType: authorityName 중 선택된 항목들을 묶어서 ,로 구분시킨 String ex)\"운영자,슈퍼어드민,name\", \"운영자,슈퍼어드민\" etc...",
+		description = "계정 목록을 조회한다.<br /><br />"
+			+ "- searchCondition: \"\", \"accountName\", \"username\", \"companyName\" 중 하나<br />"
+			+ "- sort: 하나 이상의 정렬 조건, 예: \"regDt,asc\", \"username,asc\", \"accountName,asc\" 등",
 		security = {
 			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
 		},
 		parameters = {
-			@Parameter(name = "searchCondition", in = ParameterIn.QUERY, description = "검색조건", example = ""),
+			@Parameter(name = "searchCondition", in = ParameterIn.QUERY, description = "검색조건", example = "", array = @ArraySchema(schema = @Schema(type = "string", allowableValues = { "", "accountName", "username", "companyName" }))),
 			@Parameter(name = "searchKeyword", in = ParameterIn.QUERY, description = "검색어", example = ""),
-			@Parameter(name = "searchType", in = ParameterIn.QUERY, description = "유형", example = "", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
 			@Parameter(name = "page", in = ParameterIn.QUERY, description = "페이지 번호", example = ""),
 			@Parameter(name = "size", in = ParameterIn.QUERY, description = "페이지 목록 사이즈", example = ""),
-			@Parameter(name = "sort", in = ParameterIn.QUERY, description = "정렬 조건(sort=regDt,asc, username,asc, accountName,asc)", example = "")
+			@Parameter(name = "sort", in = ParameterIn.QUERY, description = "정렬 조건", example = "", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class))))
 		},
 		responses = {
-			@ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDetail.class)))
+			@ApiResponse(responseCode = "200", description = "success", content = @Content(array = @ArraySchema(schema = @Schema(implementation = AccountDetail.class))))
 		}
 	)
 	@CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H36)
@@ -150,7 +149,7 @@ public class AccountController {
 	@SuppressWarnings("rawtypes")
 	@Operation(
 		summary = "계정 삭제(완료)",
-		description = "계정을 삭제한다",
+		description = "계정을 삭제한다.",
 		security = {
 			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
 		},
@@ -167,7 +166,7 @@ public class AccountController {
 	@SuppressWarnings("rawtypes")
 	@Operation(
 		summary = "계정 중복 조회(완료)",
-		description = "계정이 중복인지 확인한다",
+		description = "계정이 중복인지 확인한다.",
 		security = {
 			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
 		},
@@ -184,7 +183,7 @@ public class AccountController {
 	@SuppressWarnings("rawtypes")
 	@Operation(
 		summary = "계정 차단(완료)",
-		description = "계정을 차단한다",
+		description = "계정을 차단한다.",
 		security = {
 			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
 		},
@@ -201,7 +200,7 @@ public class AccountController {
 	@SuppressWarnings("rawtypes")
 	@Operation(
 		summary = "계정 승인(완료)",
-		description = "계정을 승인한다",
+		description = "계정을 승인한다.",
 		security = {
 			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
 		},
