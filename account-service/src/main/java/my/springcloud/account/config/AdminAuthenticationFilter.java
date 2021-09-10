@@ -39,7 +39,7 @@ public class AdminAuthenticationFilter extends UsernamePasswordAuthenticationFil
 	private final CustomUserDetailsHelper customUserDetailsHelper;
 
 	public AdminAuthenticationFilter(AuthenticationManager authenticationManager, long jwtExp) {
-		super.setFilterProcessesUrl("/opr/v1/auth/final");
+		super.setFilterProcessesUrl("/v1/auth/final");
 
 		this.authenticationManager = authenticationManager;
 		this.objectMapper = new JacksonMapperConfig().objectMapper();

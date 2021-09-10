@@ -48,7 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.csrf().disable()
 			.authorizeRequests()
 			.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-			.antMatchers("/opr/v1/auth/**", "/opr/v1/codes/**").permitAll()
+			.antMatchers("/v1/auth/**", "/v1/codes/**").permitAll()
 			.anyRequest().authenticated()
 			.accessDecisionManager(this.accessDecisionManager())
 			.and()
@@ -58,7 +58,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 			.logout()
-			.logoutUrl("/opr/v1/logout")
+			.logoutUrl("/v1/logout")
 			.logoutSuccessHandler(this.logoutSuccessHandler());
 	}
 

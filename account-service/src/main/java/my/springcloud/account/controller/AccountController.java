@@ -44,7 +44,7 @@ import my.springcloud.config.swagger.OpenApiConfig;
 
 @Tag(name = "계정 API", description = "")
 @Slf4j
-@RequestMapping(value = "/opr/v1/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 @RequiredArgsConstructor
 public class AccountController {

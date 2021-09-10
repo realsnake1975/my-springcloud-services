@@ -20,7 +20,7 @@ import my.springcloud.common.utils.CodeUtils;
 @Tag(name = "공통코드 조회 API", description = "")
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping(value = "/opr/v1/codes", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1/codes", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class CodeController {
 

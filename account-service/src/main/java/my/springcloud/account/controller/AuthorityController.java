@@ -39,7 +39,7 @@ import my.springcloud.config.swagger.OpenApiConfig;
 
 @Tag(name = "권한 API", description = "")
 @Slf4j
-@RequestMapping(value = "/opr/v1/authorities", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1/authorities", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 @RequiredArgsConstructor
 public class AuthorityController {
@@ -154,7 +154,7 @@ public class AuthorityController {
 		}
 	)
 	@CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H42)
-	@GetMapping(value = "/find-menu")
+	@GetMapping(value = "/menus")
 	public ResponseEntity findMenu() {
 		return ResponseEntity.ok(this.authorityService.findMenu());
 	}

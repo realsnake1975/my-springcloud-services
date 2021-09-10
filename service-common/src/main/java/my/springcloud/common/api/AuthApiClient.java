@@ -20,7 +20,7 @@ public interface AuthApiClient {
 	 * @return 인증토큰(authToken)
 	 * @Deprecated
 	 */
-	@PostMapping("/opr/v1/auth/login")
+	@PostMapping("/v1/auth/login")
 	CommonModel<String> login(@RequestBody LoginCheck dto);
 
 	/**
@@ -29,7 +29,7 @@ public interface AuthApiClient {
 	 * @param authToken - 인증토큰
 	 * @Deprecated
 	 */
-	@PostMapping("/opr/v1/auth/request-sms-otp")
+	@PostMapping("/v1/auth/request-sms-otp")
 	CommonModel<Boolean> requestSmsOtp(@RequestHeader("x-auth-token") String authToken);
 
 	/**
@@ -38,7 +38,7 @@ public interface AuthApiClient {
 	 * @param dto - 인증확인 DTO
 	 * @return JWT(accessToken, refreshToken)
 	 */
-	@PostMapping("/opr/v1/auth/final")
+	@PostMapping("/v1/auth/final")
 	CommonModel<TokenDetail> authFinal(@RequestBody AuthCheck dto);
 
 }

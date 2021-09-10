@@ -32,7 +32,7 @@ import my.springcloud.config.swagger.OpenApiConfig;
 
 @Tag(name = "인증 API", description = "")
 @Slf4j
-@RequestMapping(value = "/opr/v1", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 @RequiredArgsConstructor
 public class AuthController {

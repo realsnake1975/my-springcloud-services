@@ -24,7 +24,7 @@ import my.springcloud.common.model.auth.AuthCheck;
 @Tag(name = "인증 API", description = "")
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping(value = "/opr/v1", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class AuthRestController {
 

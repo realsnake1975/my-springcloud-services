@@ -24,7 +24,7 @@ import my.springcloud.config.swagger.OpenApiConfig;
 
 @Tag(name = "메뉴 API", description = "")
 @Slf4j
-@RequestMapping(value = "/opr/v1/menus", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/v1/menus", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 @RequiredArgsConstructor
 public class MenuController {

@@ -12,7 +12,7 @@ public interface LogoutApiClient {
 	/**
 	 * 로그아웃
 	 */
-	@PostMapping("/opr/v1/logout")
+	@PostMapping("/v1/logout")
 	CommonModel<Boolean> logout();
 
 }
