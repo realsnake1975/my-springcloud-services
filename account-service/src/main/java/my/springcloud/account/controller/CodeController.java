@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -28,13 +29,10 @@ public class CodeController {
 
 	@SuppressWarnings("rawtypes")
 	@Operation(
-		summary = "계정 상태 공통코드 조회 (완료)",
+		summary = "계정 상태 공통코드 조회",
 		description = "계정 상태 공통코드 목록을 조회한다.",
-		//            security = {
-		//                    @SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
-		//            },
 		responses = {
-			@ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = CodeDetail.class)))
+			@ApiResponse(responseCode = "200", description = "success", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CodeDetail.class))))
 		}
 	)
 	@GetMapping(value = "/account-status")
@@ -44,13 +42,10 @@ public class CodeController {
 
 	@SuppressWarnings("rawtypes")
 	@Operation(
-		summary = "소속회사 공통코드 조회 (완료)",
+		summary = "소속회사 공통코드 조회",
 		description = "소속회사 공통코드 목록을 조회한다.",
-		//            security = {
-		//                    @SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
-		//            },
 		responses = {
-			@ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = CodeDetail.class)))
+			@ApiResponse(responseCode = "200", description = "success", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CodeDetail.class))))
 		}
 	)
 	@GetMapping(value = "/company")
@@ -60,13 +55,10 @@ public class CodeController {
 
 	@SuppressWarnings("rawtypes")
 	@Operation(
-		summary = "권한 유형 공통코드 조회 (완료)",
+		summary = "권한 유형 공통코드 조회",
 		description = "권한 유형 공통코드 목록을 조회한다.",
-		//            security = {
-		//                    @SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
-		//            },
 		responses = {
-			@ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = CodeDetail.class)))
+			@ApiResponse(responseCode = "200", description = "success", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CodeDetail.class))))
 		}
 	)
 	@GetMapping(value = "/authority")

@@ -54,11 +54,11 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 			filterChain.doFilter(request, response);
 			return;
 		} catch (ExpiredJwtException e) {
-			log.error("> JWT 유효기한 만료: {}", e.getMessage());
-			responseCodeType = ResponseCodeType.SERVER_ERROR_41001002;
+			log.error("JWT 유효기한 만료: {}", e.getMessage());
+			responseCodeType = ResponseCodeType.SERVER_ERROR_41001016;
 		} catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException | DecodingException e) {
-			log.error("> JWT 형식 오류: {}", e.getMessage());
-			responseCodeType = ResponseCodeType.SERVER_ERROR_41001001;
+			log.error("JWT 형식 오류: {}", e.getMessage());
+			responseCodeType = ResponseCodeType.SERVER_ERROR_41001017;
 		}
 
 		SecurityContextHolder.clearContext();

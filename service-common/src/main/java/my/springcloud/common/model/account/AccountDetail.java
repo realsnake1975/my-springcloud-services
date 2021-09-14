@@ -40,10 +40,10 @@ public class AccountDetail implements Serializable {
 
 	private static final long serialVersionUID = -6605465516954409942L;
 
-	@Schema(name = "accountId", description = "계정아이디")
+	@Schema(name = "accountId", description = "계정 일련번호")
 	private long accountId;
 
-	@Schema(name = "username", description = "계정아이디")
+	@Schema(name = "username", description = "계정 아이디", required = true, minLength = 4, maxLength = 15)
 	private String username;
 
 	@Schema(name = "authority", description = "권한")
@@ -52,19 +52,19 @@ public class AccountDetail implements Serializable {
 	@Schema(name = "loginHistories", description = "로그인 이력")
 	private List<LoginHistoryDetail> loginHistories = new ArrayList<>();
 
-	@Schema(name = "password", description = "비밀번호")
+	@Schema(name = "password", description = "비밀번호", required = true, minLength = 8, maxLength = 20, format = "password")
 	private String password;
 
-	@Schema(name = "accountName", description = "이름")
+	@Schema(name = "accountName", description = "이름", required = true)
 	private String accountName;
 
-	@Schema(name = "companyName", description = "소속회사명")
+	@Schema(name = "companyName", description = "소속회사명", required = true)
 	private String companyName;
 
-	@Schema(name = "phoneNumber", description = "연락처")
+	@Schema(name = "phoneNumber", description = "연락처", required = true)
 	private String phoneNumber;
 
-	@Schema(name = "email", description = "이메일")
+	@Schema(name = "email", description = "이메일", required = true, format = "email")
 	private String email;
 
 	@Schema(name = "regId", description = "등록자아이디")
@@ -88,7 +88,7 @@ public class AccountDetail implements Serializable {
 	@Schema(name = "accountLockedDt", description = "계정 잠금일시")
 	private LocalDateTime accountLockedDt;
 
-	public void convertXss() {
+	private void convertXss() {
 		if (Objects.nonNull(username)) {
 			username = TextUtils.convertXss(username);
 		}
@@ -104,6 +104,12 @@ public class AccountDetail implements Serializable {
 		if (Objects.nonNull(email)) {
 			email = TextUtils.convertXss(email);
 		}
+	}
+
+	public AccountDetail convertXssAndPasswordEmpty() {
+		this.convertXss();
+		this.password = "";
+		return this;
 	}
 
 }

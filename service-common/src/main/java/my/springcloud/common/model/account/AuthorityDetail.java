@@ -35,19 +35,19 @@ public class AuthorityDetail implements Serializable {
 
 	private static final long serialVersionUID = -6605465516954409942L;
 
-	@Schema(name = "authorityId", description = "권한아이디")
+	@Schema(name = "authorityId", description = "권한 일련번호")
 	private long authorityId;
 
 	@Schema(name = "menuAuthorities", description = "메뉴권한")
 	private List<MenuAuthorityDetail> menuAuthorities = new ArrayList<>();
 
-	@Schema(name = "authorityName", description = "권한명")
+	@Schema(name = "authorityName", description = "권한명", required = true)
 	private String authorityName;
 
 	@Schema(name = "description", description = "설명")
 	private String description;
 
-	@Schema(name = "useYn", description = "사용여부")
+	@Schema(name = "useYn", description = "사용여부", required = true)
 	private Boolean useYn;
 
 	@Schema(name = "regId", description = "등록자아이디")

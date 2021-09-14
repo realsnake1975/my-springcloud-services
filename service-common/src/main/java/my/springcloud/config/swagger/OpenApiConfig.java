@@ -31,7 +31,7 @@ public class OpenApiConfig {
 	// 토큰인증헤더 키
 	public static final String HEADER_NAME_AUTHORIZATION = "Authorization";
 	// 토큰인증헤더 키 (Basic)
-	public static final String HEADER_NAME_BASIC = "basic";
+	public static final String HEADER_NAME_BASIC = "Basic";
 	// API 헤더 키
 	public static final String HEADER_NAME_APIKEY = "apiKey";
 
@@ -57,20 +57,15 @@ public class OpenApiConfig {
 			.info(new Info()
 				.version("v1")
 				.title("[" + Optional.ofNullable(this.appName).orElse("").toUpperCase() + "] API")
-				.description(
-					"my-cloud-services의 " + Optional.ofNullable(this.appName).orElse("").toUpperCase() + " API 문서입니다.")
-				.contact(new Contact()
-					.name("(주)리얼스네이크")
-					.email("realsnake1975@gamil.com")
-					.url("https://")
-				)
+				.description("my-cloud-services의 " + Optional.ofNullable(this.appName).orElse("").toUpperCase() + " API 문서입니다.")
+				.contact(new Contact().name("(주)리얼스네이크").email("realsnake1975@gamil.com").url("https://"))
 				.license(new License().name("Copyrightⓒ2021 realsnake All rights reserved").url("https://"))
 			);
 	}
 
 	private Components generateComponents() {
 		return new Components()
-			// 인증헤더 설정
+			// JWT Bearer 설정
 			.addSecuritySchemes(OpenApiConfig.HEADER_NAME_AUTHORIZATION,
 				new SecurityScheme()
 					.type(SecurityScheme.Type.HTTP)
@@ -96,30 +91,24 @@ public class OpenApiConfig {
 	}
 
 	/**
-	 * 전역응답 모델설정
+	 * 전역 응답 모델 설정
 	 *
 	 * @return
 	 */
 	@Bean
 	public OpenApiCustomiser globalOpenApiResponses() {
-		return openApi -> openApi.getPaths().values()
-			.forEach(path ->
-				path.readOperations()
-					.forEach(operation -> {
+		return openApi -> openApi.getPaths().values().forEach(path ->
+				path.readOperations().forEach(operation -> {
 						ApiResponses responses = operation.getResponses();
-						responses.addApiResponse("401",
-							makeApiResponse("Unauthorized", new CommonModel<>(HttpStatus.UNAUTHORIZED)));
-						responses.addApiResponse("403",
-							makeApiResponse("Forbidden", new CommonModel<>(HttpStatus.FORBIDDEN)));
-						responses.addApiResponse("404",
-							makeApiResponse("Not Found", new CommonModel<>(HttpStatus.NOT_FOUND)));
-						responses.addApiResponse("500", makeApiResponse("Internal server error",
-							new CommonModel<>(HttpStatus.INTERNAL_SERVER_ERROR)));
-					}));
+						responses.addApiResponse("401", this.makeApiResponse("Unauthorized", new CommonModel<>(HttpStatus.UNAUTHORIZED)));
+						responses.addApiResponse("403", this.makeApiResponse("Forbidden", new CommonModel<>(HttpStatus.FORBIDDEN)));
+						responses.addApiResponse("404", this.makeApiResponse("Not Found", new CommonModel<>(HttpStatus.NOT_FOUND)));
+						responses.addApiResponse("500", this.makeApiResponse("Internal server error", new CommonModel<>(HttpStatus.INTERNAL_SERVER_ERROR)));
+				}));
 	}
 
 	/**
-	 * 기본응답 데이터 확인
+	 * 전역 응답 데이터 확인
 	 * @param desc
 	 * @param message
 	 * @return
@@ -128,9 +117,7 @@ public class OpenApiConfig {
 		return new ApiResponse()
 			.description(desc)
 			.content(
-				new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
-					new io.swagger.v3.oas.models.media.MediaType().schema(
-						new Schema<CommonModel<?>>().example(message)))
+				new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE, new io.swagger.v3.oas.models.media.MediaType().schema(new Schema<CommonModel<?>>().example(message)))
 			);
 	}
 

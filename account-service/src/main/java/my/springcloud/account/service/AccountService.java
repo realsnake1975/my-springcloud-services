@@ -1,7 +1,9 @@
 package my.springcloud.account.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -57,10 +59,7 @@ public class AccountService {
 	public AccountDetail find(long id) {
 		Account account = this.findById(id);
 		AccountDetail accountDetail = this.accountMapper.toDto(account);
-		accountDetail.setPassword("");
-		accountDetail.convertXss();
-
-		return accountDetail;
+		return accountDetail.convertXssAndPasswordEmpty();
 	}
 
 	/**
@@ -74,17 +73,15 @@ public class AccountService {
 	public Page<AccountDetail> find(AccountSpec spec, Pageable pageable) {
 		return this.accountRepository.findAll(spec, pageable).map(a -> {
 			AccountDetail accountDetail = this.accountMapper.toDto(a);
-			accountDetail.setPassword("");
-			accountDetail.convertXss();
-			return accountDetail;
+			return accountDetail.convertXssAndPasswordEmpty();
 		});
 	}
 
 	/**
 	 * 계정 등록
 	 *
-	 * @param userDetails 로그인 사용자 데이타
-	 * @param accountCreate 등록할 계정 데이타
+	 * @param userDetails 로그인 사용자
+	 * @param accountCreate 등록할 계정
 	 * @return 계정 상세
 	 */
 	public AccountDetail create(UserDetails userDetails, AccountCreate accountCreate) {
@@ -101,18 +98,15 @@ public class AccountService {
 		account.setAuthority(this.authorityRepository.findById(accountCreate.getAuthorityId()).orElseThrow(() -> new ServiceException(ResponseCodeType.SERVER_ERROR_41001015)));
 
 		AccountDetail accountDetail = this.accountMapper.toDto(this.accountRepository.save(account.publish("reg")));
-		accountDetail.setPassword("");
-		accountDetail.convertXss();
-
-		return accountDetail;
+		return accountDetail.convertXssAndPasswordEmpty();
 	}
 
 	/**
 	 * 계정 수정
 	 *
-	 * @param userDetails 로그인 사용자 데이타
+	 * @param userDetails 로그인 사용자
 	 * @param id 수정할 계정 아이디
-	 * @param accountModify 수정할 계정 데이타
+	 * @param accountModify 수정할 계정
 	 * @return 계정 상세
 	 */
 	public AccountDetail modify(UserDetails userDetails, long id, AccountModify accountModify) {
@@ -141,22 +135,29 @@ public class AccountService {
 		}
 
 		AccountDetail accountDetail = this.accountMapper.toDto(account);
-		accountDetail.setPassword("");
-		accountDetail.convertXss();
-
-		return accountDetail;
+		return accountDetail.convertXssAndPasswordEmpty();
 	}
 
 	/**
 	 * 계정 삭제
 	 *
+	 * @param userDetails 로그인 사용자
 	 * @param ids 계정 아이디들
-	 * @return true or false
+	 * @return 삭제된 계정 일련번호들
 	 */
-	public boolean remove(List<Long> ids) {
+	public List<Long> remove(UserDetails userDetails, List<Long> ids) {
 		// TODO: 로그인 사용자 권한 체크
-		ids.forEach(this.accountRepository::deleteById);
-		return true;
+
+		List<Long> deletedIds = new ArrayList<>();
+
+		ids.forEach(id -> {
+			if (this.accountRepository.existsById(id)) {
+				this.accountRepository.deleteById(id);
+				deletedIds.add(id);
+			}
+		});
+
+		return deletedIds;
 	}
 
 	/**
@@ -180,10 +181,7 @@ public class AccountService {
 		return this.accountRepository.findAll().stream()
 			.map(a -> {
 				AccountDetail accountDetail = this.accountMapper.toDto(a);
-				accountDetail.setPassword("");
-				accountDetail.convertXss();
-
-				return accountDetail;
+				return accountDetail.convertXssAndPasswordEmpty();
 			})
 			.collect(Collectors.toList());
 	}
@@ -191,29 +189,34 @@ public class AccountService {
 	/**
 	 * 계정 차단
 	 *
-	 * @param userDetails 로그인 사용자 데이타
+	 * @param userDetails 로그인 사용자
 	 * @param ids 계정 아이디들
-	 * @return true or false
+	 * @return 차단된 계정 일련번호들
 	 */
-	public boolean blockAccounts(UserDetails userDetails, List<Long> ids) {
-		ids.forEach(id -> {
-			Account account = this.findById(id);
-			account.setStatus(AccountStatusType.BLOCK.code());
-			account.setUpdId(userDetails.getUsername());
-			account.setUpdDt(LocalDateTime.now());
-		});
+	public List<Long> blockAccounts(UserDetails userDetails, List<Long> ids) {
+		List<Long> blockedIds = new ArrayList<>();
 
-		return true;
+		ids.forEach(id -> this.accountRepository.findById(id).ifPresent(a -> {
+			a.setStatus(AccountStatusType.BLOCK.code());
+			a.setUpdId(userDetails.getUsername());
+			a.setUpdDt(LocalDateTime.now());
+
+			blockedIds.add(id);
+		}));
+
+		return blockedIds;
 	}
 
 	/**
 	 * 계정 승인
 	 *
-	 * @param userDetails 로그인 사용자 데이타
+	 * @param userDetails 로그인 사용자
 	 * @param ids 계정 아이디들
-	 * @return true or false
+	 * @return 승인된 계정 일련번호들
 	 */
-	public boolean permitAccounts(UserDetails userDetails, List<Long> ids) {
+	public List<Long> approveAccounts(UserDetails userDetails, List<Long> ids) {
+		List<Long> approvedIds = new ArrayList<>();
+
 		ids.forEach(id -> this.accountRepository.findById(id).ifPresent(a -> {
 			if (AccountStatusType.LOCKED.code().equals(a.getStatus())) {
 				a.setAccountLockedDt(null);
@@ -230,9 +233,11 @@ public class AccountService {
 				h.setOtpAuthTryCnt(0);
 				h.setOtpAuthFailCnt(0);
 			});
+
+			approvedIds.add(id);
 		}));
 
-		return true;
+		return approvedIds;
 	}
 
 }

@@ -160,7 +160,7 @@ public class AuthorityService {
 	 * @return 메뉴 목록
 	 */
 	@Transactional(readOnly = true)
-	public List<MenuDetail> findMenu() {
+	public List<MenuDetail> findMenus() {
 		return this.menuRepository.findAll().stream().map(this.menuMapper::toDto).collect(Collectors.toList());
 	}
 

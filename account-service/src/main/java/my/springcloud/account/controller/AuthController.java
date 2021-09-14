@@ -41,7 +41,7 @@ public class AuthController {
 
 	@SuppressWarnings("rawtypes")
 	@Operation(
-		summary = "로그인 (완료)",
+		summary = "로그인",
 		description = "로그인 아이디와 비밀번호로 로그인한다.",
 		responses = {
 			@ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = String.class)))
@@ -55,7 +55,7 @@ public class AuthController {
 
 	@SuppressWarnings("rawtypes")
 	@Operation(
-		summary = "SMS 인증번호 요청 (완료)",
+		summary = "SMS 인증번호 요청",
 		description = "인증토큰에 해당하는 사용자의 핸드폰에 SMS 인증번호를 발송한다.",
 		responses = {
 			@ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = Boolean.class)))
@@ -69,7 +69,7 @@ public class AuthController {
 
 	@SuppressWarnings("rawtypes")
 	@Operation(
-		summary = "토큰 갱신 (완료)",
+		summary = "토큰 갱신",
 		description = "토큰을 갱신한다.",
 		responses = {
 			@ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = Boolean.class)))
@@ -82,7 +82,7 @@ public class AuthController {
 
 	@SuppressWarnings("rawtypes")
 	@Operation(
-		summary = "비밀번호 변경 (완료)",
+		summary = "비밀번호 변경",
 		description = "비밀번호를 변경한다.",
 		security = {
 			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
@@ -93,14 +93,13 @@ public class AuthController {
 	)
 	@CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H31)
 	@PutMapping("/accounts/change-password")
-	public <U extends UserDetails> ResponseEntity changePassword(@AuthenticationPrincipal U principal,
-		@RequestBody PasswordUpdate dto) {
+	public <U extends UserDetails> ResponseEntity changePassword(@AuthenticationPrincipal U principal, @RequestBody PasswordUpdate dto) {
 		return ResponseEntity.ok(this.authService.changePassword((CustomUserDetails)principal, dto));
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Operation(
-		summary = "비밀번호 확인 (완료)",
+		summary = "비밀번호 확인",
 		description = "비밀번호를 확인한다.",
 		security = {
 			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
@@ -135,7 +134,7 @@ public class AuthController {
 
 	@SuppressWarnings("rawtypes")
 	@Operation(
-		summary = "로그아웃 (완료)",
+		summary = "로그아웃",
 		description = "로그아웃",
 		security = {
 			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)

@@ -30,13 +30,12 @@ public class AccountCreate extends AccountDetail {
 
 	private static final long serialVersionUID = -5154790211167492937L;
 
-	@Schema(name = "authorityId", description = "권한아이디")
+	@Schema(name = "authorityId", description = "권한 일련번호", required = true, type = "integer", format = "int64")
 	private long authorityId;
 
 	public AccountCreate() {
 		LocalDateTime now = LocalDateTime.now();
 		super.setRegDt(now);
-		super.setUpdDt(now);
 		super.setStatus(AccountStatusType.APPROVAL.code());
 	}
 
