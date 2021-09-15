@@ -32,7 +32,7 @@ public class AuthRestController {
 
 	@SuppressWarnings("rawtypes")
 	@Operation(
-		summary = "인증번호 확인 (완료)",
+		summary = "인증번호 확인",
 		description = "인증번호 확인 후 JWT(accessToken)를 반환한다.",
 		responses = {
 			@ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = String.class)))

@@ -1,9 +1,9 @@
 package my.springcloud.account.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -12,8 +12,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import my.springcloud.account.domain.aggregate.Account;
 import my.springcloud.account.domain.repository.AccountRepository;
@@ -25,6 +29,7 @@ import my.springcloud.common.constants.AccountStatusType;
 import my.springcloud.common.constants.ResponseCodeType;
 import my.springcloud.common.exception.ResourceNotFoundException;
 import my.springcloud.common.exception.ServiceException;
+import my.springcloud.common.model.AttachFileDetail;
 import my.springcloud.common.model.account.AccountCreate;
 import my.springcloud.common.model.account.AccountDetail;
 import my.springcloud.common.model.account.AccountModify;
@@ -37,13 +42,15 @@ import my.springcloud.common.utils.TextUtils;
 @Service
 public class AccountService {
 
-	private final PasswordEncoder passwordEncoder;
-
 	private final AccountRepository accountRepository;
-	private final AccountMapper accountMapper;
-
 	private final AuthorityRepository authorityRepository;
 	private final LoginHistoryRepository loginHistoryRepository;
+
+	private final AttachFileComponent attachFileComponent;
+
+	private final PasswordEncoder passwordEncoder;
+	private final AccountMapper accountMapper;
+	private final ObjectMapper objectMapper;
 
 	private Account findById(long id) {
 		return this.accountRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
@@ -89,7 +96,6 @@ public class AccountService {
 
 		CustomUserDetails loginUser = (CustomUserDetails) userDetails;
 		accountCreate.setRegId(loginUser.getUsername());
-		accountCreate.setUpdId(loginUser.getUsername());
 
 		String encodedPassword = this.passwordEncoder.encode(accountCreate.getPassword());
 		accountCreate.setPassword(encodedPassword);
@@ -238,6 +244,26 @@ public class AccountService {
 		}));
 
 		return approvedIds;
+	}
+
+	/**
+	 * 계정 등록 및 첨부파일 저장
+	 *
+	 * @param userDetails 로그인 사용자
+	 * @param accountCreateJsonString JSON 문자열 형태의 등록할 계정
+	 * @param multipartFiles 첨부파일들
+	 * @return 계정 상세
+	 */
+	@SneakyThrows
+	public AccountDetail createAndSave(UserDetails userDetails, String accountCreateJsonString, MultipartFile[] multipartFiles) {
+		AccountCreate accountCreate = this.objectMapper.readValue(accountCreateJsonString, AccountCreate.class);
+		AccountDetail accountDetail = this.create(userDetails, accountCreate);
+
+		// final long parentId = accountDetail.getAccountId();
+		List<AttachFileDetail> attachFiles = this.attachFileComponent.save(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMM")), multipartFiles);
+		// TODO: 첨부파일 데이터 DB 저장
+
+		return accountDetail;
 	}
 
 }

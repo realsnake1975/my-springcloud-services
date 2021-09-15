@@ -16,8 +16,11 @@ public class AttachFileDetail implements Serializable {
 
 	private static final long serialVersionUID = -3450318880193835651L;
 
-	@Schema(name = "orgName", description = "원본파일명")
+	@Schema(name = "orgName", description = "원본 파일명")
 	private final String orgName;
+
+	@Schema(name = "updatedName", description = "변경된 파일명")
+	private final String updatedName;
 
 	@Schema(name = "mime", description = "mime 타입")
 	private final String mime;

@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -212,6 +214,25 @@ public class AccountController {
 	@PutMapping("/approve")
 	public <U extends UserDetails> ResponseEntity approveAccounts(@AuthenticationPrincipal U principal, @RequestParam List<Long> ids) {
 		return ResponseEntity.ok(this.accountService.approveAccounts(principal, ids));
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Operation(
+		summary = "계정 등록 & 첨부파일 저장",
+		description = "계정을 등록하고 첨부파일을 저장한다.",
+		security = {
+			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
+		},
+		responses = {
+			@ApiResponse(responseCode = "200", description = "success", content = @Content(schema = @Schema(implementation = AccountDetail.class)))
+		}
+	)
+	@CustomLogger(svcType = SvcType.SVC08, svcClassType = SvcClassType.F09, subSvcClassType = SubSvcClassType.H32)
+	@PostMapping(value = "/upload", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+	public <U extends UserDetails> ResponseEntity createAndSave(@AuthenticationPrincipal U principal
+		, @RequestPart("accountCreateJsonString") String accountCreateJsonString
+		, @RequestPart(value = "attachFiles", required = false) MultipartFile[] attachFiles) {
+		return ResponseEntity.ok(this.accountService.createAndSave(principal, accountCreateJsonString, attachFiles));
 	}
 
 }
