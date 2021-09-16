@@ -1,10 +1,14 @@
 package my.springcloud.account.controller;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,6 +42,7 @@ import my.springcloud.common.logging.CustomLogger;
 import my.springcloud.common.logging.SubSvcClassType;
 import my.springcloud.common.logging.SvcClassType;
 import my.springcloud.common.logging.SvcType;
+import my.springcloud.common.model.account.AccountAttachFileDetail;
 import my.springcloud.common.model.account.AccountCreate;
 import my.springcloud.common.model.account.AccountDetail;
 import my.springcloud.common.model.account.AccountModify;
@@ -233,6 +238,53 @@ public class AccountController {
 		, @RequestPart("accountCreateJsonString") String accountCreateJsonString
 		, @RequestPart(value = "attachFiles", required = false) MultipartFile[] attachFiles) {
 		return ResponseEntity.ok(this.accountService.createAndSave(principal, accountCreateJsonString, attachFiles));
+	}
+
+	@Operation(
+		summary = "첨부파일 다운로드",
+		description = "첨부파일을 다운로드한다.",
+		security = {
+			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
+		},
+		parameters  = {
+			@Parameter(name = "attachFileId", in = ParameterIn.PATH, required = true, description = "첨부파일 아이디", schema = @Schema(type = "string"))
+		}
+	)
+	@GetMapping(value = "/download/{attachFileId}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	public <U extends UserDetails> ResponseEntity<Resource> download(@AuthenticationPrincipal U principal, @PathVariable String attachFileId) {
+		AccountAttachFileDetail attachFile = this.accountService.getAttachFile(attachFileId);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentDisposition(ContentDisposition.builder("attachment").filename(attachFile.getOrgName(), StandardCharsets.UTF_8).build());
+		headers.setCacheControl("no-cache, no-store, must-revalidate");
+		headers.setPragma("no-cache");
+		headers.setExpires(0L);
+
+		return ResponseEntity.ok()
+			.headers(headers)
+			.contentLength(attachFile.getSize())
+			.contentType(MediaType.APPLICATION_OCTET_STREAM)
+			.body(attachFile.getResource());
+	}
+
+	@Operation(
+		summary = "이미지 보기",
+		description = "이미지 보기",
+		security = {
+			@SecurityRequirement(name = OpenApiConfig.HEADER_NAME_AUTHORIZATION)
+		},
+		parameters  = {
+			@Parameter(name = "attachFileId", in = ParameterIn.PATH, required = true, description = "첨부파일 아이디", schema = @Schema(type = "string"))
+		}
+	)
+	@GetMapping(value = "/view-image/{attachFileId}", produces = { MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE } )
+	public <U extends UserDetails> ResponseEntity<Resource> viewImage(@AuthenticationPrincipal U principal, @PathVariable String attachFileId) {
+		AccountAttachFileDetail attachFile = this.accountService.getAttachFile(attachFileId);
+
+		return ResponseEntity.ok()
+			.contentLength(attachFile.getSize())
+			.contentType(MediaType.parseMediaType(attachFile.getMime()))
+			.body(attachFile.getResource());
 	}
 
 }

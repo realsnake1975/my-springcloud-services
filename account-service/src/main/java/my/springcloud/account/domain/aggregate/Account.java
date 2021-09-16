@@ -2,20 +2,27 @@ package my.springcloud.account.domain.aggregate;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.BatchSize;
 import org.springframework.data.domain.AbstractAggregateRoot;
 
 import lombok.Getter;
 import lombok.Setter;
+import my.springcloud.account.domain.entity.AccountAttachFile;
 import my.springcloud.account.domain.entity.Authority;
 import my.springcloud.common.event.CustomEvent;
 
@@ -94,5 +101,10 @@ public class Account extends AbstractAggregateRoot<Account> implements Serializa
 		super.registerEvent(new CustomEvent<>(eventType, this));
 		return this;
 	}
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@JoinColumn(name = "account_id")
+	@BatchSize(size = 10)
+	private List<AccountAttachFile> attachFiles = new ArrayList<>();
 
 }

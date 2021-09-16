@@ -27,10 +27,13 @@ import my.springcloud.common.utils.TextUtils;
 	"regId",
 	"regDt",
 	"updId",
-	"updDt"
+	"updDt",
+	"attachFiles"
 })
 @ToString(exclude = {
-	"accountId"
+	"accountId",
+	"loginHistories",
+	"attachFiles"
 })
 @JsonIgnoreProperties(value = {
 	"loginHistories"
@@ -87,6 +90,9 @@ public class AccountDetail implements Serializable {
 
 	@Schema(name = "accountLockedDt", description = "계정 잠금일시")
 	private LocalDateTime accountLockedDt;
+
+	@Schema(name = "attachFiles", description = "첨부파일 목록")
+	private List<AccountAttachFileDetail> attachFiles = new ArrayList<>();
 
 	private void convertXss() {
 		if (Objects.nonNull(username)) {

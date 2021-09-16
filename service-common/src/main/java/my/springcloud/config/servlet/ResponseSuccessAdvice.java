@@ -40,13 +40,10 @@ public class ResponseSuccessAdvice implements ResponseBodyAdvice<Object> {
 	 */
 	@SneakyThrows
 	@Override
-	public Object beforeBodyWrite(Object body, MethodParameter methodParameter, MediaType mediaType,
-		Class<? extends HttpMessageConverter<?>> httpMessageConverter, ServerHttpRequest serverHttpRequest,
-		ServerHttpResponse serverHttpResponse) {
+	public Object beforeBodyWrite(Object body, MethodParameter methodParameter, MediaType mediaType, Class<? extends HttpMessageConverter<?>> httpMessageConverter, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
 		HttpStatus httpStatus = HttpStatus.OK;
 		if (serverHttpResponse instanceof ServletServerHttpResponse) {
-			httpStatus = HttpStatus.valueOf(
-				((ServletServerHttpResponse)serverHttpResponse).getServletResponse().getStatus());
+			httpStatus = HttpStatus.valueOf(((ServletServerHttpResponse)serverHttpResponse).getServletResponse().getStatus());
 		}
 
 		serverHttpResponse.setStatusCode(httpStatus);
@@ -55,7 +52,8 @@ public class ResponseSuccessAdvice implements ResponseBodyAdvice<Object> {
 			return this.objectMapper.writeValueAsString(new CommonModel<>(body));
 		}
 
-		if ("image".equalsIgnoreCase(mediaType.getType())) {
+		log.debug("mediaType.getType(): {}, mediaType.getSubtype(): {}", mediaType.getType(), mediaType.getSubtype());
+		if ("image".equalsIgnoreCase(mediaType.getType()) || "octet-stream".equalsIgnoreCase(mediaType.getSubtype())) {
 			return body;
 		}
 

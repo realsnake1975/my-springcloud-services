@@ -15,14 +15,18 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import my.springcloud.common.exception.ResourceNotFoundException;
 import my.springcloud.common.model.AttachFileDetail;
 import my.springcloud.common.utils.TextUtils;
 
@@ -39,11 +43,11 @@ public class AttachFileComponent {
 	@SneakyThrows
 	@PostConstruct
 	private void init() {
-		this.createDir(this.fileUploadRootPath);
+		this.createOrGetDir(this.fileUploadRootPath);
 	}
 
 	@SneakyThrows
-	private Path createDir(String dir) {
+	private Path createOrGetDir(String dir) {
 		Path path = Paths.get(dir);
 		if (Files.notExists(path)) {
 			Files.createDirectories(path);
@@ -65,7 +69,7 @@ public class AttachFileComponent {
 			return null;
 		}
 
-		Path dirPath = (TextUtils.isEmpty(path)) ? this.createDir(this.fileUploadRootPath) : this.createDir(this.fileUploadRootPath + File.separator + path);
+		Path dirPath = (TextUtils.isEmpty(path)) ? this.createOrGetDir(this.fileUploadRootPath) : this.createOrGetDir(this.fileUploadRootPath + File.separator + path);
 
 		String originalFileName = multipartFile.getOriginalFilename();
 		String orgFileName = StringUtils.cleanPath(Objects.requireNonNull(originalFileName));
@@ -74,13 +78,10 @@ public class AttachFileComponent {
 		String mime = multipartFile.getContentType();
 		long fileSize = multipartFile.getSize();
 
-		// https://sshkim.tistory.com/98
-		// https://gaemi606.tistory.com/entry/Spring-Boot-REST-API-%ED%8C%8C%EC%9D%BC-%EC%97%85%EB%A1%9C%EB%93%9C-%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C
-		// https://www.bezkoder.com/spring-boot-file-upload/
 		Files.copy(multipartFile.getInputStream(), dirPath.resolve(updatedFileName), StandardCopyOption.REPLACE_EXISTING);
-		log.debug("첨부파일 저장 완료: {}, {}, {}", orgFileName, updatedFileName, fileSize);
+		log.debug("첨부파일 저장 완료: {}, {}, {}, {}", orgFileName, updatedFileName, fileSize, dirPath.toAbsolutePath());
 
-		return new AttachFileDetail(orgFileName, updatedFileName, mime, fileSize);
+		return new AttachFileDetail(orgFileName, updatedFileName, mime, fileSize, dirPath.toAbsolutePath().toString());
 	}
 
 	/**
@@ -101,6 +102,39 @@ public class AttachFileComponent {
 			.collect(Collectors.toList());
 
 		return cfs.stream().map(CompletableFuture::join).filter(Objects::nonNull).collect(Collectors.toList());
+	}
+
+	/**
+	 * 첨부파일 다운로드
+	 *
+	 * @param filePath 파일경로
+	 * @param fileName 파일명
+	 * @return Resource
+	 */
+	@SneakyThrows
+	public Resource load(String filePath, String fileName) {
+		Path file = this.createOrGetDir(filePath).resolve(fileName);
+		Resource resource = new FileSystemResource(file);
+
+		if (resource.exists()) {
+			return resource;
+		}
+		else {
+			throw new ResourceNotFoundException();
+		}
+	}
+
+	/**
+	 * 첨부파일 삭제
+	 *
+	 * @param filePath 파일경로
+	 * @param fileName 파일명
+	 * @return true or false
+	 */
+	@SneakyThrows
+	public Boolean delete(String filePath, String fileName) {
+		Path file = this.createOrGetDir(filePath).resolve(fileName);
+		return FileSystemUtils.deleteRecursively(file);
 	}
 
 }

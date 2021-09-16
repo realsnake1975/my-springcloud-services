@@ -24,7 +24,8 @@ import my.springcloud.common.constants.AccountStatusType;
 	"updId",
 	"updDt",
 	"passwordUpdDt",
-	"accountLockedDt"
+	"accountLockedDt",
+	"attachFiles"
 })
 @Schema(name = "AccountModify", description = "계정 수정 DTO")
 public class AccountModify extends AccountDetail {

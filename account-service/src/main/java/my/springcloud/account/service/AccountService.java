@@ -20,16 +20,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import my.springcloud.account.domain.aggregate.Account;
+import my.springcloud.account.domain.entity.AccountAttachFile;
+import my.springcloud.account.domain.repository.AccountAttachFileRepository;
 import my.springcloud.account.domain.repository.AccountRepository;
 import my.springcloud.account.domain.repository.AuthorityRepository;
 import my.springcloud.account.domain.repository.LoginHistoryRepository;
 import my.springcloud.account.domain.spec.AccountSpec;
+import my.springcloud.account.mapper.AccountAttachFileMapper;
 import my.springcloud.account.mapper.AccountMapper;
 import my.springcloud.common.constants.AccountStatusType;
 import my.springcloud.common.constants.ResponseCodeType;
 import my.springcloud.common.exception.ResourceNotFoundException;
 import my.springcloud.common.exception.ServiceException;
 import my.springcloud.common.model.AttachFileDetail;
+import my.springcloud.common.model.account.AccountAttachFileDetail;
 import my.springcloud.common.model.account.AccountCreate;
 import my.springcloud.common.model.account.AccountDetail;
 import my.springcloud.common.model.account.AccountModify;
@@ -45,11 +49,13 @@ public class AccountService {
 	private final AccountRepository accountRepository;
 	private final AuthorityRepository authorityRepository;
 	private final LoginHistoryRepository loginHistoryRepository;
+	private final AccountAttachFileRepository attachFileRepository;
 
 	private final AttachFileComponent attachFileComponent;
 
 	private final PasswordEncoder passwordEncoder;
 	private final AccountMapper accountMapper;
+	private final AccountAttachFileMapper attachFileMapper;
 	private final ObjectMapper objectMapper;
 
 	private Account findById(long id) {
@@ -91,7 +97,7 @@ public class AccountService {
 	 * @param accountCreate 등록할 계정
 	 * @return 계정 상세
 	 */
-	public AccountDetail create(UserDetails userDetails, AccountCreate accountCreate) {
+	private Account createAccount(UserDetails userDetails, AccountCreate accountCreate) {
 		PasswordValidator.validatePassword(accountCreate.getPassword());
 
 		CustomUserDetails loginUser = (CustomUserDetails) userDetails;
@@ -103,8 +109,21 @@ public class AccountService {
 		Account account = this.accountMapper.toEntity(accountCreate);
 		account.setAuthority(this.authorityRepository.findById(accountCreate.getAuthorityId()).orElseThrow(() -> new ServiceException(ResponseCodeType.SERVER_ERROR_41001015)));
 
-		AccountDetail accountDetail = this.accountMapper.toDto(this.accountRepository.save(account.publish("reg")));
-		return accountDetail.convertXssAndPasswordEmpty();
+		return account;
+	}
+
+	/**
+	 * 계정 등록
+	 *
+	 * @param userDetails 로그인 사용자
+	 * @param accountCreate 등록할 계정
+	 * @return 계정 상세
+	 */
+	public AccountDetail create(UserDetails userDetails, AccountCreate accountCreate) {
+		Account account = this.createAccount(userDetails, accountCreate);
+		this.accountRepository.save(account.publish("reg"));
+
+		return this.accountMapper.toDto(account).convertXssAndPasswordEmpty();
 	}
 
 	/**
@@ -257,13 +276,35 @@ public class AccountService {
 	@SneakyThrows
 	public AccountDetail createAndSave(UserDetails userDetails, String accountCreateJsonString, MultipartFile[] multipartFiles) {
 		AccountCreate accountCreate = this.objectMapper.readValue(accountCreateJsonString, AccountCreate.class);
-		AccountDetail accountDetail = this.create(userDetails, accountCreate);
+		Account account = this.createAccount(userDetails, accountCreate);
 
-		// final long parentId = accountDetail.getAccountId();
 		List<AttachFileDetail> attachFiles = this.attachFileComponent.save(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMM")), multipartFiles);
-		// TODO: 첨부파일 데이터 DB 저장
 
-		return accountDetail;
+		List<AccountAttachFile> accountAttachFiles = attachFiles.stream()
+			// .map(a -> new AccountAttachFileDetail(a, account.getAccountId()))
+			.map(AccountAttachFileDetail::new)
+			.map(this.attachFileMapper::toEntity)
+			.collect(Collectors.toList());
+
+		account.setAttachFiles(accountAttachFiles);
+
+		this.accountRepository.save(account.publish("reg"));
+
+		return this.accountMapper.toDto(account).convertXssAndPasswordEmpty();
+	}
+
+	/**
+	 * 첨부파일 단건 조회
+	 *
+	 * @param attachFileId 첨부파일 아이디
+	 * @return AccountAttachFileDetail
+	 */
+	@Transactional(readOnly = true)
+	public AccountAttachFileDetail getAttachFile(String attachFileId) {
+		AccountAttachFile attachFile = this.attachFileRepository.findById(attachFileId).orElseThrow(ResourceNotFoundException::new);
+		AccountAttachFileDetail aafd = this.attachFileMapper.toDto(attachFile);
+		aafd.setResource(this.attachFileComponent.load(attachFile.getPath(), attachFile.getUpdatedName()));
+		return aafd;
 	}
 
 }
